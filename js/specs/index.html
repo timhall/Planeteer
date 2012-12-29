@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Spec Runner</title>
+
+    <link rel="stylesheet" href="../..//css/jasmine.css" type="text/css" media="screen" />
+
+    <script src="../require.config.js" type="text/javascript"></script>
+    <script src="../lib/require.js" type="text/javascript"></script>
+
+    <script src="../lib/jasmine.js" type="text/javascript"></script>
+    <script src="../lib/sinon-1.4.2.js" type="text/javascript"></script>
+    <script src="../lib/jasmine.html.js" type="text/javascript"></script>
+    <script src="../lib/jasmine.sinon.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        require.config({
+            baseUrl: '../'
+        });
+
+        require(
+        ['specs/environment.spec', 'specs/Matter.spec'],
+        function () {
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 1000;
+
+            var htmlReporter = new jasmine.HtmlReporter();
+
+            jasmineEnv.addReporter(htmlReporter);
+
+            jasmineEnv.specFilter = function (spec) {
+                return htmlReporter.specFilter(spec);
+            };
+
+            var currentWindowOnload = window.onload;
+
+            window.onload = function () {
+                if (currentWindowOnload) {
+                    currentWindowOnload();
+                }
+                execJasmine();
+            };
+
+            function execJasmine() {
+                jasmineEnv.execute();
+            }
+        })
+    </script>
+</head>
+
+<body></body>
+</html>

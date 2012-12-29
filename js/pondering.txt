@@ -1,0 +1,36 @@
+Components of Cosmic:
+- Environment
+    Holds all of the objects and updates physics
+    (also we need to think of a better word for objects since object is a "reserved"
+     word and could get us in trouble)
+
+- Camera
+    Looks at the environment and draws what it sees to the canvas
+
+- "Matter"
+    Has physics and some displayed object, but knows nothing about how it is being displayed
+
+
+Flow:
+
+var ship = new cosmic.Matter;
+cosmic.environment.add(ship);
+cosmic.start();
+
+// Starts loop
+environment.advance(timestep);
+
+// Which calls
+ship.advance(timestamp)
+
+var camera = new FabricCamera();        Are we making FabricCamera later? (yes)
+
+cosmic.camera = camera;
+camera.position(x, y);
+camera.scale(1.5);
+
+// Loop calls
+camera.draw();
+
+// which calls
+ship.draw(offset, scale);
