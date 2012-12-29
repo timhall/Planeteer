@@ -1,38 +1,44 @@
 define(
-['cosmic', 'freebody', 'fabric', 'underscore'],
-function (cosmic, freebody, fabric, _) {
+['cosmic', 'freebody', 'underscore', 'kinetic'],
+function (cosmic, freebody, _, Kinetic) {
    
     // Create simple ball
-    var Ball = function () {
+    var Ball = function (options) {
+        options = _.extend({}, Ball.defaults, options);
+        
+        this.color = options.color;
+        
         // Inherit from Matter
-        cosmic.Matter.call(this, {
-            mass: 10,
-            //v: new freebody.Vector().x(10),
-            x: 150,
-            y: 150
-        });
+        cosmic.Matter.call(this, options);
         
         return this;
     };
+    
+    Ball.defaults = {
+        color: 'blue',
+        mass: 10,
+        x: 150,
+        y: 150
+    }
+    
     _.extend(Ball.prototype, cosmic.Matter.prototype, {
         create: function () {
-            //this.display = new fabric.Circle()
-            //    .set('x', 100).set('y', 100).set('radius', 25).set('fill', 'blue');
+            var color = this.color || 'blue';
             
-            this.display = new fabric.Circle({
-                left: 100,
-                top: 100,
-                fill: 'red',
+            this.display = new Kinetic.Circle({
                 radius: 25,
-                selectable: false
+                fill: color,
+                stroke: 'black',
+                strokeWidth: 4
             });
             
             return this.display;
         },
         draw: function (offset, zoom) {
-            this.display.left = this.x - offset.x;
-            this.display.top = this.y - offset.y;
-            this.display.radius = 25 * zoom;    //watch this hardcode
+            this.display.setX(this.x - offset.x);
+            this.display.setY(this.y - offset.y);
+            this.display.setScale(zoom, zoom);
+            
         }
     });
     

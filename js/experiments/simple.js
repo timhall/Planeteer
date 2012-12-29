@@ -1,5 +1,5 @@
 require(
-['cosmic', 'freebody', 'cosmic/KineticCamera', 'experiments/Ball2'],
+['cosmic', 'freebody', 'cosmic/KineticCamera', 'experiments/Ball'],
 function (cosmic, freebody, KineticCamera, Ball) {
     
     // Set up ball
