@@ -17,6 +17,6 @@ function (Matter) {
             
             var matter = new Obj();
             expect(spy).toHaveBeenCalled();
-        })
+        });
     });
-})
+});

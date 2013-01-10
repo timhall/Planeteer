@@ -12,6 +12,11 @@ function (freebody, _) {
     environment.planets = [];
     environment.bodies = [];
     
+    environment.bounds = {
+        width: 800,
+        height: 600
+    };
+    
     environment.addBody = function (body) {
         this.addObject(body, 'body');
     };
@@ -51,14 +56,46 @@ function (freebody, _) {
      */
     environment.advance = function (timestep) {
         // Advance physics for objects by timestep
-        for (var i = 0; i < environment.objects.length; i++) {
-            if (_.isFunction(environment.objects[i].advance)){
-                environment.objects[i].advance(timestep);
+        _.each(environment.objects, function (obj) {
+            if (_.isFunction(obj.advance)) {
+                obj.advance(timestep);
             }
+        });
+        
+        // Check for collisions
+        _.each(environment.objects, function (obj, i) {
+            if (_.isFunction(obj.collision)) {
+                // Check for collision for remaining objects
+                for (var j = i + 1; j < environment.objects.length; j += 1) {
+                    obj.collision(environment.objects[j]);
+                }
+            }
+        });
+        
+        // Check for out-of-bounds
+        _.each(environment.objects, function (obj) {
+            environment.outOfBounds(obj);
+        });
+    };
+    
+    /**
+     * Check if object is out-of-bounds and handle
+     * 
+     * @param {Matter} obj
+     * @return {Boolean} isOutOfBounds
+     */
+    environment.outOfBounds = function (obj) {
+        if (obj.x < -10) {
+            obj.x = environment.bounds.width + 10;
+        } else if (obj.x > environment.bounds.width + 10) {
+            obj.x = -10;
         }
         
-        // TODO: Check for collisions
-        
+        if (obj.y < -10) {
+            obj.y = environment.bounds.height + 10;
+        } else if (obj.y > environment.bounds.height + 10) {
+            obj.y = -10;
+        }
     };
     
     return environment;

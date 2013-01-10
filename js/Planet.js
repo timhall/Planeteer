@@ -1,38 +1,70 @@
-//Create Planet with x-position, y-position, mass, and radius
+/**
+ * Planet class
+ */
 
 define(
-['freebody', 'fabric'],
-function (freebody) {
-    var Planet = function (options, stage) {
-        var planet = this,
-            display;
+['cosmic', 'underscore', 'kinetic'],
+function (cosmic, _, Kinetic) {
+    var Planet = function (options) {
+        var self = this;
         
-        // Planet inherits from body
-        planet = new freebody.Body({
-            mass: options && options.mass || 10000000000000000,
-            x: options && options.x || 0,
-            y: options && options.y || 0
+        // Set options and inherit from Matter
+        self.options = _.defaults(options, Planet.defaults);
+        cosmic.Matter.call(self, self.options);
+        
+        // Properties
+        // ...
+        
+        // Define display
+        self.display = new Kinetic.Circle({
+            radius: self.options.radius,
+            fill: self.options.color,
+            stroke: 'black',
+            strokeWidth: 2
         });
-               
-        planet.draw = function () {
-            display.attr('x', Math.round(planet.x));
-            display.attr('y', Math.round(planet.y));
-        };
         
-        planet.update = function (step) {
-            
-        };
+        /*self.display = new Kinetic.Path({
+            data: 'M12.582,9.551C3.251,16.237,0.921,29.021,7.08,38.564l-2.36,1.689l4.893,2.262l4.893,2.262l-0.568-5.36l-0.567-5.359l-2.365,1.694c-4.657-7.375-2.83-17.185,4.352-22.33c7.451-5.338,17.817-3.625,23.156,3.824c5.337,7.449,3.625,17.813-3.821,23.152l2.857,3.988c9.617-6.893,11.827-20.277,4.935-29.896C35.591,4.87,22.204,2.658,12.582,9.551z',
+            fill: 'green'
+        })*/
         
-        planet.create = function () {
-            display = new fabric.Circle(planet.x, planet.y, 50);
-            display.fill('cyan');
-            display.addTo(stage);
-            return planet;
-        };
+        // Setup bounding (center distance)
+        self.setBounding(self.options.radius);
         
-        return planet.create();
+        return self;
     };    
+    
+    Planet.defaults = {
+        color: 'blue',
+        mass: 10,
+        x: 150,
+        y: 150,
+        radius: 25
+    };
  
+    _.extend(Planet.prototype,
+        cosmic.Matter.prototype,
+        cosmic.collisions.centerDistance,
+        
+        /**
+         * @prototype
+         */
+        {            
+            draw: function (offset, zoom) {
+                this.display.setX((this.x - offset.x)*zoom);
+                this.display.setY((this.y - offset.y)*zoom);
+                
+                this.display.setScale(zoom, zoom);
+            },
+            
+            collide: function (obj) {
+                //this.display.setFill('red');
+                
+                //this.v.x(-this.v.x());
+                //this.v.y(-this.v.y());
+            }
+        }
+    );
     
     return Planet;
-})
+});

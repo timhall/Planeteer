@@ -31,6 +31,7 @@ function (_) {
         
         // Internal properties
         this._layers = {};
+        this.following = null;
     };
     
     /**
@@ -85,9 +86,44 @@ function (_) {
     ICamera.prototype.drawMatter = function (matter) {
         if (matter && _.isFunction(matter.draw)) {
             // TODO: Handle zoom in offset that's passed to draw()
+            if (this.following) {
+                //console.log(this.following);
+                this.position.x = this.following.x - 400/this.scale;
+                this.position.y = this.following.y - 300/this.scale;
+                //console.log(this.position.x + ' | ' +  this.position.y)
+            }
             matter.draw(this.position, this.scale); 
         }
     };
+    
+    
+    /**
+     * Improved camera functionality
+     * Follow or one-time center on an object
+     * @param {Object?} object to focus on
+     * @prototype
+     */
+    ICamera.prototype.follow = function (object) {
+        console.log('called');
+        this.following = object;
+        console.log(this.following);
+    }
+    
+    ICamera.prototype.stopFollow = function () {
+        this.following = null;
+    }
+    
+    ICamera.prototype.center = function (object) {
+        this.following = null;
+        this.position.x = object.x - 400/this.scale;
+        this.position.y = object.y - 300/this.scale;
+    }
+    
+    ICamera.prototype.reset = function () {
+        this.position.x = this.position.y = 0;
+        this.scale = 1;
+        this.following = null;
+    }
     
     return ICamera;
 });

@@ -11,8 +11,8 @@ function (cosmic, _, Kinetic) {
         // Create main stage
         this.stage = new Kinetic.Stage({
             container: containerId,
-            width: (options && options.width) || 600,
-            height: (options && options.height) || 400
+            width: (options && options.width) || 800,
+            height: (options && options.height) || 600
         });
         
         this._displayLayers = {};

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>Spec Runner</title>
 
-    <link rel="stylesheet" href="../..//css/jasmine.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../../css/jasmine.css" type="text/css" media="screen" />
 
     <script src="../require.config.js" type="text/javascript"></script>
     <script src="../lib/require.js" type="text/javascript"></script>
@@ -21,7 +21,7 @@
         });
 
         require(
-        ['specs/environment.spec', 'specs/Matter.spec'],
+        ['specs/environment.spec', 'specs/Matter.spec', 'specs/collisions.spec'],
         function () {
             var jasmineEnv = jasmine.getEnv();
             jasmineEnv.updateInterval = 1000;

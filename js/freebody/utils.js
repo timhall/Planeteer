@@ -5,7 +5,8 @@
 define(
 [],
 function () {
-    var utils = {};
+    var utils = {},
+        zeroPoint = { x: 0, y: 0 };
     
     /**
      * Determine the radians of a given angle
@@ -161,6 +162,21 @@ function () {
         }
         return !!result;
     }
+    
+    /**
+     * Find point relative to initial point that is set distance and angle away
+     * 
+     * @param {point} initialPoint x and y coordinates
+     * @param {Number} angle should be in degrees
+     * @param {Number} distance
+     */
+    utils.relativePoint = function (initialPoint, angle, distance) {
+        if (initialPoint == undefined) { initialPoint = zeroPoint; }
+        return { 
+            x: initialPoint.x + distance * Math.cos(utils.radians(angle)), 
+            y: initialPoint.y + distance * Math.sin(utils.radians(angle))
+        };  
+    };
     
     return utils;
 });

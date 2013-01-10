@@ -3,28 +3,69 @@
  */
 
 define(
-['freebody/Body', 'underscore'],
-function (Body, _) {
+['freebody', 'underscore', 'backbone'],
+function (freebody, _, Backbone) {
     
+    /**
+     * Matter
+     * 
+     * @param {Object} [options]
+     * @class
+     */
     var Matter = function (options) {
         var matter = this;
         
+        // Instance properties
+        matter.angle = 0;
+     
         // Inherit instance properties from Body
         // (Call Body constructor, using matter as "this" and passing in options)
-        Body.call(matter, options);
-        
-        // Create display object
-        if (_.isFunction(matter.create)) {
-            matter.create.call(matter);            
-        }
+        freebody.Body.call(matter, options);
         
         return matter;
     };
     
-    // Inherit prototype properties from Body
-    _.extend(Matter.prototype, Body.prototype);
-    
-    
+    /**
+     * @prototype
+     */
+    _.extend(Matter.prototype, 
+        // Inherit prototype properties from Body
+        freebody.Body.prototype,
+        
+        // Add Events (from Backbone)
+        Backbone.Events,
+        
+        {
+            /**
+             * Check for collision (and apply if found)
+             *
+             * @param {Matter} obj to check
+             * @prototype
+             */
+            collision: function (obj) {
+                var matter = this;
+                
+                // Check collision (if defined)
+                if (_.isFunction(matter.checkCollision) && matter.checkCollision(obj)) {
+                    matter.collide(obj);
+                    obj.collide(matter);
+                    
+                    return true;
+                }
+                
+                return false;
+            },
+            
+            /**
+             * Apply collision with object
+             * 
+             * @param {Matter} obj that was collided with
+             * @prototype
+             */
+            collide: function (obj) {}
+            
+        }
+    );
     
     return Matter;
 });

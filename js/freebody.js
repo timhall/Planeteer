@@ -5,7 +5,7 @@ function (utils, Vector, Body, gravity) {
         utils: utils,
         Vector: Vector,
         Body: Body,
-        gravity: gravity
+        gravity: gravity,
     };
     
     return freebody;
