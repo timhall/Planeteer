@@ -1,6 +1,7 @@
 #################
 ## Eclipse
 #################
+.c9revisions/
 
 *.pydevproject
 .project
