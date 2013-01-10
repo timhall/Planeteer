@@ -6,27 +6,29 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
     var ship = [
         new Ball({
             color: 'yellow',
-            radius: 10,
+            radius: 20,
+            mass: 10,
             //v: new freebody.Vector().x(50),
-            v: new freebody.Vector().y(-30),
-            x: 100,
-            y: 160
+            v: new freebody.Vector().x(10),
+            x: 300,
+            y: 90
         }),
         new Ball({
             color: 'orange',
-            radius: 13,
-            mass: 15,
-            v: new freebody.Vector().y(30),
-            x: 100,//3*environment.bounds.width/4,
-            y: 100//3*environment.bounds.height/4
-        }),
-        new Ball({
-            color: 'red',
-            radius: 16,
+            radius: 25,
             mass: 20,
-            v: new freebody.Vector().y(30),
-            x: 200,//3*environment.bounds.width/4,
-            y: 150//3*environment.bounds.height/4
+            v: new freebody.Vector().x(-30),
+            x: 450,//3*environment.bounds.width/4,
+            y: 110//3*environment.bounds.height/4
+        }),
+        
+        new Ball({
+            color: 'orange',
+            radius: 25,
+            mass: 20,
+            v: new freebody.Vector().x(-30),
+            x: 450,//3*environment.bounds.width/4,
+            y: 410//3*environment.bounds.height/4
         })
     ];
     
@@ -34,17 +36,10 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
         new Ball({
             color: 'blue',
             radius: 40,
-            mass: 1000000000000000,
-            x: 2*environment.bounds.width/3,
-            y: environment.bounds.height/3
-        }),
-        new Ball({
-            color: 'green',
-            radius: 50,
-            mass: 2000000000000000,
-            x: environment.bounds.width/3,
-            y: 2*environment.bounds.height/3
-        })
+            mass: 100,
+            x: 300,
+            y: 430
+        })    
     ];
     
     // Add ship and planets

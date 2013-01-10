@@ -20,3 +20,4 @@
 {"ts":1357791755192,"patch":[[{"diffs":[[0,"nts/"],[-1,"simple"],[1,"collision"],[0,"\" sr"]],"start1":1081,"start2":1081,"length1":14,"length2":17}]],"length":1155,"saved":false}
 {"ts":1357791849711,"patch":[[{"diffs":[[0,"nts/"],[-1,"collision"],[1,"simple"],[0,"\" sr"]],"start1":1081,"start2":1081,"length1":17,"length2":14}]],"length":1152,"saved":false}
 {"contributors":[],"silentsave":false,"ts":1357847558630,"patch":[[{"diffs":[[0,"nts/"],[-1,"simple"],[1,"collision"],[0,"\" sr"]],"start1":1081,"start2":1081,"length1":14,"length2":17}]],"length":1155,"saved":false}
+{"ts":1357848064109,"patch":[[{"diffs":[[0,"nts/"],[-1,"collision"],[1,"simple"],[0,"\" sr"]],"start1":1081,"start2":1081,"length1":17,"length2":14}]],"length":1152,"saved":false}
