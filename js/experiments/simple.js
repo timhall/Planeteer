@@ -84,22 +84,3 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
     console.log('Starting experiment');
     cosmic.start();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
