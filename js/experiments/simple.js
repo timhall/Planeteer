@@ -27,6 +27,14 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
             v: new freebody.Vector().y(30),
             x: 200,//3*environment.bounds.width/4,
             y: 150//3*environment.bounds.height/4
+        }),
+        new Ball({
+            color: 'cyan',
+            radius: 20,
+            mass: 2000,
+            v: new freebody.Vector().y(30),
+            x: 150,//3*environment.bounds.width/4,
+            y: 150//3*environment.bounds.height/4
         })
     ];
     
