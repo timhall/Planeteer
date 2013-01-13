@@ -1,10 +1,10 @@
 require(
-['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet', 'cosmic/environment'],
-function (cosmic, freebody, KineticCamera, Ball, environment) {
+['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet.new', 'Ship', 'cosmic/environment'],
+function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     
     // Set up ship and planets
     var ships = [
-        new Ball({
+        new Ship({
             color: 'yellow',
             radius: 10,
             //v: new freebody.Vector().x(50),
@@ -12,7 +12,7 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
             x: 100,
             y: 160
         }),
-        new Ball({
+        new Ship({
             color: 'orange',
             radius: 13,
             mass: 15,
@@ -20,7 +20,7 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
             x: 100,//3*environment.bounds.width/4,
             y: 100//3*environment.bounds.height/4
         }),
-        new Ball({
+        new Ship({
             color: 'red',
             radius: 16,
             mass: 20,
@@ -28,7 +28,7 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
             x: 200,//3*environment.bounds.width/4,
             y: 150//3*environment.bounds.height/4
         }),
-        new Ball({
+        new Ship({
             color: 'cyan',
             radius: 20,
             mass: 2000,
@@ -39,14 +39,14 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
     ];
     
     var planets = [
-        new Ball({
+        new Planet({
             color: 'blue',
             radius: 40,
             mass: 1000000000000000,
             x: 2*environment.bounds.width/3,
             y: environment.bounds.height/3
         }),
-        new Ball({
+        new Planet({
             color: 'green',
             radius: 50,
             mass: 2000000000000000,

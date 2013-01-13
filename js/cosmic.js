@@ -1,6 +1,6 @@
 define(
-['cosmic/Matter', 'cosmic/environment', 'cosmic/CameraBase', 'cosmic/collisions'],
-function (Matter, environment, CameraBase, collisions) {
+['cosmic/Matter', 'cosmic/environment', 'cosmic/CameraBase', 'cosmic/collisions', 'cosmic/gamePiece'],
+function (Matter, environment, CameraBase, collisions, gamePiece) {
     var cosmic = {},
         time,
         rAF = window.requestAnimationFrame,
@@ -10,6 +10,7 @@ function (Matter, environment, CameraBase, collisions) {
     cosmic.Matter = Matter;
     cosmic.CameraBase = CameraBase;
     cosmic.collisions = collisions;
+    cosmic.gamePiece = gamePiece;
     
     cosmic.environment = environment;   
     

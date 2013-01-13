@@ -18,7 +18,7 @@ function (freebody, _) {
          * @param {Object} obj to apply bounding to
          * @param {Number} radius
          */
-        bounding: function (obj, radius) {
+        setBounding: function (obj, radius) {
             bounding(obj, { radius: radius });
         },
         
@@ -58,7 +58,7 @@ function (freebody, _) {
          * @param {Number} offsetLength distance from center of matter to side of bounding box
          * @param {Number} theta (degrees) of offset relative to matter angle
          */
-        bounding: function (obj, width, height, offsetLength, theta) {
+        setBounding: function (obj, width, height, offsetLength, theta) {
             boundingBox(obj, width, height, offsetLength, theta);
         },
         

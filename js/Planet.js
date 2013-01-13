@@ -1,40 +1,34 @@
-/**
- * Planet class
- */
-
 define(
 ['cosmic', 'underscore', 'kinetic'],
 function (cosmic, _, Kinetic) {
+
+    /**
+     * Planet class
+     */
     var Planet = function (options) {
-        var self = this;
-        
         // Set options and inherit from Matter
-        self.options = _.defaults(options, Planet.defaults);
-        cosmic.Matter.call(self, self.options);
+        this.options = _.defaults(options, Planet.defaults);
+        cosmic.Matter.call(this, this.options);
         
         // Properties
         // ...
         
         // Define display
-        self.display = new Kinetic.Circle({
-            radius: self.options.radius,
-            fill: self.options.color,
+        this.display = new Kinetic.Circle({
+            radius: this.options.radius,
+            fill: this.options.color,
             stroke: 'black',
             strokeWidth: 2
         });
         
-        /*self.display = new Kinetic.Path({
-            data: 'M12.582,9.551C3.251,16.237,0.921,29.021,7.08,38.564l-2.36,1.689l4.893,2.262l4.893,2.262l-0.568-5.36l-0.567-5.359l-2.365,1.694c-4.657-7.375-2.83-17.185,4.352-22.33c7.451-5.338,17.817-3.625,23.156,3.824c5.337,7.449,3.625,17.813-3.821,23.152l2.857,3.988c9.617-6.893,11.827-20.277,4.935-29.896C35.591,4.87,22.204,2.658,12.582,9.551z',
-            fill: 'green'
-        })*/
-        
         // Setup bounding (center distance)
-        cosmic.collisions.centerDistance.bounding(self, self.options.radius);
-        //self.setBounding(self.options.radius);
-        
-        return self;
+        cosmic.collisions.centerDistance.bounding(this, this.options.radius);
     };    
     
+    /**
+     * Default properties
+     * @static
+     */
     Planet.defaults = {
         color: 'blue',
         mass: 10,
@@ -43,29 +37,61 @@ function (cosmic, _, Kinetic) {
         radius: 25
     };
  
+    /**
+     * @prototype
+     */
+    Planet.prototype = {
+        draw: function (offset, zoom) {
+            this.display.setX((this.x - offset.x)*zoom);
+            this.display.setY((this.y - offset.y)*zoom);
+                
+            this.display.setScale(zoom, zoom);
+        },
+            
+        collide: function (obj) {
+            this.display.setFill('red');
+        }
+    };
+
+    // Extensions
     _.extend(Planet.prototype,
         cosmic.Matter.prototype,
-        cosmic.collisions.centerDistance,
-        
-        /**
-         * @prototype
-         */
-        {            
-            draw: function (offset, zoom) {
-                this.display.setX((this.x - offset.x)*zoom);
-                this.display.setY((this.y - offset.y)*zoom);
-                
-                this.display.setScale(zoom, zoom);
-            },
-            
-            collide: function (obj) {
-                //this.display.setFill('red');
-                
-                //this.v.x(-this.v.x());
-                //this.v.y(-this.v.y());
-            }
-        }
+        cosmic.collisions.centerDistance.methods
     );
     
     return Planet;
 });
+/*
+var Planet = gamePiece()
+    .defaults({
+        color: 'blue',
+        mass: 10,
+        x: 150,
+        y: 150,
+        radius: 25
+    })
+    .methods({
+        draw: function (offset, zoom) {
+            this.display.setX((this.x - offset.x)*zoom);
+            this.display.setY((this.y - offset.y)*zoom);
+                
+            this.display.setScale(zoom, zoom);
+        },
+            
+        collide: function (obj) {
+            this.display.setFill('red');
+        }
+    })
+    .display(function () {
+        return new Kinetic.Circle({
+            radius: this.options.radius,
+            fill: this.options.color,
+            stroke: 'black',
+            strokeWidth: 2
+        })
+    })
+    .collisions('centerDistance', function (bounding) {
+        bounding(this.options.radius);
+    })
+    .construct();
+*/
