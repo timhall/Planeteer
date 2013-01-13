@@ -6,7 +6,7 @@ function (cosmic, _, Kinetic) {
      */
     var KineticCamera = function (containerId, options) {
         // Implement instance properties
-        cosmic.ICamera.call(this);
+        cosmic.CameraBase.call(this);
         
         // Create main stage
         this.stage = new Kinetic.Stage({
@@ -18,7 +18,7 @@ function (cosmic, _, Kinetic) {
         this._displayLayers = {};
     };
     
-    _.extend(KineticCamera.prototype, cosmic.ICamera.prototype, {
+    _.extend(KineticCamera.prototype, cosmic.CameraBase.prototype, {
         renderLayer: function (layerName) {
             var camera = this,
                 layer = camera._layers[layerName],

@@ -15,25 +15,28 @@ function (freebody, _) {
         /**
          * Set bounding around object to radius from center
          * 
+         * @param {Object} obj to apply bounding to
          * @param {Number} radius
          */
-        setBounding: function (radius) {
-            bounding(this, { radius: radius });
+        bounding: function (obj, radius) {
+            bounding(obj, { radius: radius });
         },
         
-        checkCollision: function (obj) {
-            var centerDistance = utils.distance(this, obj),
-                collisionDistance = bounding(this).radius + bounding(obj).radius;
-            
-            if (centerDistance <= collisionDistance) {
-                //if (typeof this == ball) {
-                //    forceExertedOnCircle(this, obj);
-                //}
-                //forceExertedOnCircle(obj, this);
-                bounce(obj, this);
-                return true;
-            };
-        }   
+        methods: {
+            checkCollision: function (obj) {
+                var centerDistance = utils.distance(this, obj),
+                    collisionDistance = bounding(this).radius + bounding(obj).radius;
+                
+                if (centerDistance <= collisionDistance) {
+                    //if (typeof this == ball) {
+                    //    forceExertedOnCircle(this, obj);
+                    //}
+                    //forceExertedOnCircle(obj, this);
+                    bounce(obj, this);
+                    return true;
+                };
+            }     
+        } 
     };
     
     
@@ -48,32 +51,35 @@ function (freebody, _) {
         /**
          * Set bounding around object to bounding box
          * 
+         * @param {Object} obj to apply bounding to
          * @param {Number} width of bounding box
          *     (defined as midway and perpendicular to offset)
          * @param {Number} height of bounding box (parallel to offset)
          * @param {Number} offsetLength distance from center of matter to side of bounding box
          * @param {Number} theta (degrees) of offset relative to matter angle
          */
-        setBounding: function (width, height, offsetLength, theta) {
-            boundingBox(this, width, height, offsetLength, theta);
+        bounding: function (obj, width, height, offsetLength, theta) {
+            boundingBox(obj, width, height, offsetLength, theta);
         },
         
-        checkCollision: function (obj) {
-            var matter = this;
-            
-            // Step 1: Check center distance
-            // -----------------------------
-            if (!collisions.centerDistance.checkCollision.call(matter, obj)) {
-                return false;
+        methods: {
+            checkCollision: function (obj) {
+                var matter = this;
+                
+                // Step 1: Check center distance
+                // -----------------------------
+                if (!collisions.centerDistance.checkCollision.call(matter, obj)) {
+                    return false;
+                }
+                
+                // Step 2: Check bounding box
+                // --------------------------
+                // Check whether any point of object's bounding box is within
+                // matter's bounding box
+                return !!_.find(boundingBox(obj), function (point) {
+                    return pointIsInsideMatter(point, matter)
+                });
             }
-            
-            // Step 2: Check bounding box
-            // --------------------------
-            // Check whether any point of object's bounding box is within
-            // matter's bounding box
-            return !!_.find(boundingBox(obj), function (point) {
-                return pointIsInsideMatter(point, matter)
-            });
         }
     }
     

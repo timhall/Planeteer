@@ -1,6 +1,6 @@
 define(
-['cosmic/Matter', 'cosmic/environment', 'cosmic/ICamera', 'cosmic/collisions'],
-function (Matter, environment, ICamera, collisions) {
+['cosmic/Matter', 'cosmic/environment', 'cosmic/CameraBase', 'cosmic/collisions'],
+function (Matter, environment, CameraBase, collisions) {
     var cosmic = {},
         time,
         rAF = window.requestAnimationFrame,
@@ -8,7 +8,7 @@ function (Matter, environment, ICamera, collisions) {
     
     // General classes
     cosmic.Matter = Matter;
-    cosmic.ICamera = ICamera;
+    cosmic.CameraBase = CameraBase;
     cosmic.collisions = collisions;
     
     cosmic.environment = environment;   

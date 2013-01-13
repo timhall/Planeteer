@@ -29,7 +29,8 @@ function (cosmic, _, Kinetic) {
         })*/
         
         // Setup bounding (center distance)
-        self.setBounding(self.options.radius);
+        cosmic.collisions.centerDistance.bounding(self, self.options.radius);
+        //self.setBounding(self.options.radius);
         
         return self;
     };    

@@ -3,7 +3,7 @@ require(
 function (cosmic, freebody, KineticCamera, Ball, environment) {
     
     // Set up ship and planets
-    var ship = [
+    var ships = [
         new Ball({
             color: 'yellow',
             radius: 10,
@@ -56,11 +56,11 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
     ];
     
     // Add ship and planets
-    for (var i = 0; i < ship.length; i++) {
-    cosmic.environment.addBody(ship[i]);
+    for (var i = 0; i < ships.length; i++) {
+        cosmic.environment.addBody(ships[i]);
     }
     for (var i = 0; i < planets.length; i++) {
-    cosmic.environment.addPlanet(planets[i]);
+        cosmic.environment.addPlanet(planets[i]);
     }
     
     // Setup camera
@@ -73,12 +73,23 @@ function (cosmic, freebody, KineticCamera, Ball, environment) {
     // Set camera in cosmic
     cosmic.camera = camera;
     
+    /*simple.stabilize = function () {
+        for (var i = 0; i < ship.length; i++) {
+            ship[i].v.magnitude(ship[i].v.magnitude/2);
+        }
+    }*/
+    
     // DEBUG
     window.cosmic = cosmic;
     window.camera = cosmic.camera;
     window.environment = cosmic.environment;
-    window.ship = ship;
+    window.ships = ships;
     window.planets = planets;
+    window.fun = function (x) {                        //TEMP FOR CURRENT DEMO because the ships get out of hand
+                            for (var i = 0; i < ship.length; i++) {
+                                ship[i].v.magnitude(ship[i].v.magnitude()*x);
+                            }
+                        };
     
     // Start experiment:
     console.log('Starting experiment');

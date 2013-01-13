@@ -6,11 +6,11 @@
  * // Create Camera class
  * var Camera = function () {
  *     // Implement instance properties
- *     ICamera.call(this);
+ *     CameraBase.call(this);
  * };
  * 
  * // Implement prototype and create render function
- * Camera.prototype = ICamera.prototype;
+ * Camera.prototype = CameraBase.prototype;
  * Camera.prototype.renderLayer = function (layer) { ... };
  * 
  */
@@ -21,7 +21,7 @@ function (_) {
     /**
      * Basic camera interface
      */
-    var ICamera = function () {
+    var CameraBase = function () {
         // Set instance properties: 
         // Position (relative to environment origin)
         // Zoom (+/-1)
@@ -40,7 +40,7 @@ function (_) {
      * @param {String} [layer] specific layer to render, otherwise all layers
      * @prototype
      */
-    ICamera.prototype.render = function (layer) {
+    CameraBase.prototype.render = function (layer) {
         var camera = this;
         
         if (layer) {
@@ -56,8 +56,8 @@ function (_) {
      * @param {String} layer to render
      * @prototype
      */
-    ICamera.prototype.renderLayer = function (layer) {
-        throw new Error('render layer function for ICamera implementation must be defined');  
+    CameraBase.prototype.renderLayer = function (layer) {
+        throw new Error('render layer function for CameraBase implementation must be defined');  
     };
     
     /**
@@ -67,7 +67,7 @@ function (_) {
      * @param {Object} [objects] Set objects array to render
      * @prototype
      */
-    ICamera.prototype.layer = function (layer, objects) {
+    CameraBase.prototype.layer = function (layer, objects) {
         if (_.isUndefined(objects)) {
             // Getter
             return this._layers[layer];
@@ -83,7 +83,7 @@ function (_) {
      * @param {Matter} matter to draw
      * @prototype
      */
-    ICamera.prototype.drawMatter = function (matter) {
+    CameraBase.prototype.drawMatter = function (matter) {
         if (matter && _.isFunction(matter.draw)) {
             // TODO: Handle zoom in offset that's passed to draw()
             if (this.following) {
@@ -103,27 +103,27 @@ function (_) {
      * @param {Object?} object to focus on
      * @prototype
      */
-    ICamera.prototype.follow = function (object) {
+    CameraBase.prototype.follow = function (object) {
         console.log('called');
         this.following = object;
         console.log(this.following);
     }
     
-    ICamera.prototype.stopFollow = function () {
+    CameraBase.prototype.stopFollow = function () {
         this.following = null;
     }
     
-    ICamera.prototype.center = function (object) {
+    CameraBase.prototype.center = function (object) {
         this.following = null;
         this.position.x = object.x - 400/this.scale;
         this.position.y = object.y - 300/this.scale;
     }
     
-    ICamera.prototype.reset = function () {
+    CameraBase.prototype.reset = function () {
         this.position.x = this.position.y = 0;
         this.scale = 1;
         this.following = null;
     }
     
-    return ICamera;
+    return CameraBase;
 });

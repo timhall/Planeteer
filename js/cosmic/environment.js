@@ -65,7 +65,7 @@ function (freebody, _) {
         // Check for collisions
         _.each(environment.objects, function (obj, i) {
             if (_.isFunction(obj.collision)) {
-                // Check for collision for remaining objects
+                // Check for collision with remaining objects
                 for (var j = i + 1; j < environment.objects.length; j += 1) {
                     obj.collision(environment.objects[j]);
                 }
