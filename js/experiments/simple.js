@@ -6,7 +6,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     var ships = [
         new Ship({
             color: 'yellow',
-            radius: 10,
+            radius: 15,
             //v: new freebody.Vector().x(50),
             v: new freebody.Vector().y(-30),
             x: 100,
@@ -14,7 +14,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
         }),
         new Ship({
             color: 'orange',
-            radius: 13,
+            radius: 18,
             mass: 15,
             v: new freebody.Vector().y(30),
             x: 100,//3*environment.bounds.width/4,
@@ -22,7 +22,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
         }),
         new Ship({
             color: 'red',
-            radius: 16,
+            radius: 21,
             mass: 20,
             v: new freebody.Vector().y(30),
             x: 200,//3*environment.bounds.width/4,
@@ -30,7 +30,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
         }),
         new Ship({
             color: 'cyan',
-            radius: 20,
+            radius: 25,
             mass: 2000,
             v: new freebody.Vector().y(30),
             x: 150,//3*environment.bounds.width/4,
@@ -44,14 +44,16 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
             radius: 40,
             mass: 1000000000000000,
             x: 2*environment.bounds.width/3,
-            y: environment.bounds.height/3
+            y: environment.bounds.height/3,
+            image: 'blue'
         }),
         new Planet({
             color: 'green',
-            radius: 50,
+            radius: 70,
             mass: 2000000000000000,
             x: environment.bounds.width/3,
-            y: 2*environment.bounds.height/3
+            y: 2*environment.bounds.height/3,
+            image: 'orange'
         })
     ];
     
@@ -86,8 +88,8 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     window.ships = ships;
     window.planets = planets;
     window.fun = function (x) {                        //TEMP FOR CURRENT DEMO because the ships get out of hand
-                            for (var i = 0; i < ship.length; i++) {
-                                ship[i].v.magnitude(ship[i].v.magnitude()*x);
+                            for (var i = 0; i < ships.length; i++) {
+                                ships[i].v.magnitude(ships[i].v.magnitude()*x);
                             }
                         };
     

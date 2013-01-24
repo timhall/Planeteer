@@ -14,12 +14,13 @@ function (cosmic, _, Kinetic) {
         // ...
         
         // Define display
-        this.display = new Kinetic.Circle({
+        /*this.display = new Kinetic.Circle({
             radius: this.options.radius,
             fill: this.options.color,
             stroke: 'black',
             strokeWidth: 2
-        });
+        });*/
+        
         
         // Setup bounding (center distance)
         cosmic.collisions.centerDistance.bounding(this, this.options.radius);
