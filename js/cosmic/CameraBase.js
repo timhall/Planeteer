@@ -15,8 +15,8 @@
  * 
  */
 define(
-['underscore'],
-function (_) {
+['underscore', 'cosmic/environment'],
+function (_, environment) {
     
     /**
      * Basic camera interface
@@ -28,6 +28,8 @@ function (_) {
         
         this.position = { x: 0, y: 0 };
         this.scale = 1;
+        this.viewSize = {x: 800, y: 600};
+        this.initSize = {x: 800, y: 600};
         
         // Internal properties
         this._layers = {};
@@ -115,8 +117,13 @@ function (_) {
     
     CameraBase.prototype.center = function (object) {
         this.following = null;
-        this.position.x = object.x - 400/this.scale;
-        this.position.y = object.y - 300/this.scale;
+        if (object) {
+            this.position.x = object.x - (this.viewSize.x/2);
+            this.position.y = object.y - (this.viewSize.y/2);
+        } else {
+            this.position.x = environment.bounds.width/2 - this.viewSize.x/2;
+            this.position.y = environment.bounds.height/2 - this.viewSize.y/2;
+        }
     }
     
     CameraBase.prototype.reset = function () {
@@ -124,6 +131,23 @@ function (_) {
         this.scale = 1;
         this.following = null;
     }
+    
+    CameraBase.prototype.zoom = function (zoom) {
+        var newSize = {},
+            center = {x:this.position.x + this.viewSize.x/2, y:this.position.y + this.viewSize.y/2};
+        
+        this.scale = zoom;
+        
+        newSize.x = this.initSize.x / zoom;
+        newSize.y = this.initSize.y / zoom;
+        
+        this.position.x = center.x - newSize.x/2;
+        this.position.y = center.y - newSize.y/2;
+        
+        this.viewSize.x = newSize.x;
+        this.viewSize.y = newSize.y;
+    }
+    
     
     return CameraBase;
 });

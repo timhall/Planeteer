@@ -17,7 +17,7 @@ function (Matter, collisions, _, Kinetic) {
             Matter.call(this, this.options);
             
             // Create display
-            this.display = this._create();
+            this.display = this._create.call(this);
 
             // Setup bounding (if specified)
             if (_.isFunction(this._setBounding)) {

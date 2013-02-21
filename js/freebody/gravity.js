@@ -45,6 +45,7 @@ function (Vector, utils) {
     gravity.planetary = function (body, planet, power) {
         var force = new Vector();
         
+        console.log('running gravity stuff');
         // Allow for custom power for exaggerated effect
         power = power || 2;
         

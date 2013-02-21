@@ -6,7 +6,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     var ships = [
         new Ship({
             color: 'yellow',
-            radius: 15,
+            radius: 16,
             //v: new freebody.Vector().x(50),
             v: new freebody.Vector().y(-30),
             x: 100,
@@ -14,7 +14,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
         }),
         new Ship({
             color: 'orange',
-            radius: 18,
+            radius: 19,
             mass: 15,
             v: new freebody.Vector().y(30),
             x: 100,//3*environment.bounds.width/4,
@@ -22,14 +22,14 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
         }),
         new Ship({
             color: 'red',
-            radius: 21,
+            radius: 22,
             mass: 20,
             v: new freebody.Vector().y(30),
             x: 200,//3*environment.bounds.width/4,
             y: 150//3*environment.bounds.height/4
         }),
         new Ship({
-            color: 'cyan',
+            color: 'blue',
             radius: 25,
             mass: 2000,
             v: new freebody.Vector().y(30),
@@ -87,6 +87,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     window.environment = cosmic.environment;
     window.ships = ships;
     window.planets = planets;
+    window.KC = KineticCamera;
     window.fun = function (x) {                        //TEMP FOR CURRENT DEMO because the ships get out of hand
                             for (var i = 0; i < ships.length; i++) {
                                 ships[i].v.magnitude(ships[i].v.magnitude()*x);

@@ -32,7 +32,11 @@ function (freebody, _) {
                     //    forceExertedOnCircle(this, obj);
                     //}
                     //forceExertedOnCircle(obj, this);
-                    bounce(obj, this);
+                        console.log(this.options.type, obj.options.type);
+                    if (this.options.type != 'Destination' && obj.options.type != 'Destination') {
+                        console.log(this.options.type, obj.options.type);
+                        bounce(obj, this);
+                    }   
                     return true;
                 };
             }     

@@ -11,6 +11,7 @@ function (freebody, _) {
     environment.objects = [];
     environment.planets = [];
     environment.bodies = [];
+    environment.paused = false;
     
     environment.bounds = {
         width: 800,
@@ -24,6 +25,9 @@ function (freebody, _) {
     environment.addPlanet = function (planet) {
         this.addObject(planet, 'planet');
     };
+    environment.addDestination = function (destination) {
+        this.addObject(destination, 'destination')
+    }
     
     /**
      * Add object (of type) to environment
@@ -55,27 +59,29 @@ function (freebody, _) {
      * @param {Number} timestep to advance by
      */
     environment.advance = function (timestep) {
-        // Advance physics for objects by timestep
-        _.each(environment.objects, function (obj) {
-            if (_.isFunction(obj.advance)) {
-                obj.advance(timestep);
-            }
-        });
-        
-        // Check for collisions
-        _.each(environment.objects, function (obj, i) {
-            if (_.isFunction(obj.collision)) {
-                // Check for collision with remaining objects
-                for (var j = i + 1; j < environment.objects.length; j += 1) {
-                    obj.collision(environment.objects[j]);
+        if (this.paused == false) {
+            // Advance physics for objects by timestep
+            _.each(environment.objects, function (obj) {
+                if (_.isFunction(obj.advance)) {
+                    obj.advance(timestep);
                 }
-            }
-        });
-        
-        // Check for out-of-bounds
-        _.each(environment.objects, function (obj) {
-            environment.outOfBounds(obj);
-        });
+            });
+            
+            // Check for collisions
+            _.each(environment.objects, function (obj, i) {
+                if (_.isFunction(obj.collision)) {
+                    // Check for collision with remaining objects
+                    for (var j = i + 1; j < environment.objects.length; j += 1) {
+                        obj.collision(environment.objects[j]);
+                    }
+                }
+            });
+            
+            // Check for out-of-bounds
+            _.each(environment.objects, function (obj) {
+                environment.outOfBounds(obj);
+            });
+        }
     };
     
     /**

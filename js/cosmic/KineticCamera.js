@@ -1,12 +1,12 @@
 define(
-['cosmic', 'underscore', 'kinetic'],
-function (cosmic, _, Kinetic) {
+['cosmic/CameraBase', 'underscore', 'kinetic'],
+function (CameraBase, _, Kinetic) {
     /**
      * Camera implmentation using Kinetic
      */
     var KineticCamera = function (containerId, options) {
         // Implement instance properties
-        cosmic.CameraBase.call(this);
+        CameraBase.call(this);
         
         // Create main stage
         this.stage = new Kinetic.Stage({
@@ -18,7 +18,7 @@ function (cosmic, _, Kinetic) {
         this._displayLayers = {};
     };
     
-    _.extend(KineticCamera.prototype, cosmic.CameraBase.prototype, {
+    _.extend(KineticCamera.prototype, CameraBase.prototype, {
         renderLayer: function (layerName) {
             var camera = this,
                 layer = camera._layers[layerName],

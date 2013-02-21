@@ -19,16 +19,16 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environmen
     var planets = [
         new Planet({
             color: 'blue',
-            radius: 50,
-            mass: 1000000000000000,
+            radius: 70,
+            mass: 10000000000000000,
             x: 300,
             y: 430,
             image: 'blue'
         }),
         new Planet({
             color: 'orange',
-            radius: 80,
-            mass: 2000000000000000,
+            radius: 100,
+            mass: 20000000000000000,
             x: 600,
             y: 700,
             image: 'orange'
@@ -37,22 +37,22 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environmen
     
     var destinations = [
         new Destination({
-            color: 'blue',
+            color: null,
             radius: 50,
-            x: 600,
-            y: 600
-        })  
-    ];
+            x: 1000,
+            y: 800
+        })    
+    ]
     
     // Add ship and planets
-    for (var i = 0; i < ship.length; i++) {
-        cosmic.environment.addBody(ship[i]);
-    }
     for (var i = 0; i < planets.length; i++) {
         cosmic.environment.addPlanet(planets[i]);
     }
     for (var i = 0; i < destinations.length; i++) {
         cosmic.environment.addDestination(destinations[i]);
+    }
+    for (var i = 0; i < ship.length; i++) {
+        cosmic.environment.addBody(ship[i]);
     }
     
     // Setup camera
@@ -62,6 +62,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environmen
     
     // Add layers
     camera.layer('foreground', cosmic.environment.objects);
+    camera.layer('interface', cosmic.ui.objects)
     // camera.layer('background', ...);    
     
     // Set camera in cosmic
@@ -73,6 +74,7 @@ function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environmen
     window.environment = cosmic.environment;
     window.ship = ship;
     window.planets = planets;
+    window.destinations = destinations;
     
     // Start experiment:
     console.log('Starting experiment');
