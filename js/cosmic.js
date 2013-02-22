@@ -32,11 +32,11 @@ function (Matter, environment, CameraBase, collisions, gamePiece, KineticCamera)
           if (_paused != 'env') {
               //console.log(_paused)
               // Update physics
-              cosmic.environment.advance(timestamp - (time || timestamp));
+              cosmic.environment.advance(timestamp - (cosmic.time || timestamp));
           }
           
           // Update time
-          time = timestamp;
+          cosmic.time = timestamp;
           
           // Render updated objects
           if (cosmic.beforeRender) { cosmic.beforeRender(); }
