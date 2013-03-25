@@ -1,6 +1,6 @@
-define(
-['cosmic', 'underscore', 'kinetic', 'art'],
-function (cosmic, _, Kinetic, art) {
+//define(
+//['cosmic', 'underscore', 'kinetic', 'art'],
+var Destination = (function (cosmic, _, Kinetic, art) {
     var Destination = cosmic.gamePiece()
         .defaults({
             color: null,
@@ -8,30 +8,38 @@ function (cosmic, _, Kinetic, art) {
             y: 150,
             radius: 25,
             preScale: 1,
-            clickOffset: {x: 0, y: 0},
             type: 'Destination',
-            _resetting: false
+            _resetting: false,
+            _destTime: null
         })
         .methods({
             draw: function (offset, zoom) {
                 this.display.children[0].setFill(this.options.color);
+                this.display.children[1].setRotation(this.display.children[1].attrs.rotation + 0.015);
                 this.display.setX((this.x - offset.x)*zoom);
                 this.display.setY((this.y - offset.y)*zoom);
                     
-                this.display.setScale(this.options.preScale * zoom, this.options.preScale * zoom);   
+                this.display.setScale(this.options.preScale * zoom, this.options.preScale * zoom);
+                if (this.options._destTime && cosmic.time - this.options._destTime > 800) {
+                    cosmic.reset();
+                    this.options._destTime = null;
+                    cosmic.unpause();
+                }
             },
             collide: function (obj) {
                     this.display.children[0].setFill('#F78181');
-                    console.log('destination colliding', cosmic.time)
+                    console.log('destination colliding', this._resetting);
                     if (this.options._resetting == false) {
-                        cosmic.envPause();
+                        this.options._destTime = cosmic.time;
+                        cosmic.pausePhysics();
+                        console.log(this.options.destTime, cosmic.time);
                     }
             }
         })
         
         .display(function() {
             var destination = this;
-            var lastMousePos = {x:0,y:0}
+            var lastMousePos = {x:0,y:0};
             var display = new Kinetic.Group();
             
             this.options.preScale = 
@@ -41,36 +49,18 @@ function (cosmic, _, Kinetic, art) {
             
             // Attach events
             var mouseIsDown = false;
-            display.on('mousedown' || 'touchstart', function (e) {
-                mouseIsDown = true;
-                console.log(mouseIsDown);
-                destination.options.clickOffset.x = e.layerX - (destination.x * cosmic.camera.scale);
-                destination.options.clickOffset.y = e.layerY - (destination.y * cosmic.camera.scale);
-                
+            display.move = function (e) {
+                destination.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
+                destination.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
+            };
+            
+            display.followClick = function(e) {
+                cosmic.camera.follow(destination);
+            }
+            
+            display.select = function (e) {
                 cosmic.selected = destination;
-                console.log(cosmic.selected);
-            });
-            display.on('mousemove' || 'touchmove', function (e) {
-                if (mouseIsDown) {
-                    cosmic.envPause();
-                    destination.x = (e.layerX - destination.options.clickOffset.x)/cosmic.camera.scale;
-                    destination.y = (e.layerY - destination.options.clickOffset.y)/cosmic.camera.scale;
-                    lastMousePos.x = e.layerX;
-                    lastMousePos.y = e.layerY;
-                    console.log(lastMousePos);
-                }
-            });
-            display.on('mouseup' || 'touchend', function (e) {
-                mouseIsDown = false;
-                cosmic.start();
-            })
-            display.on('beforeDraw', function (e) {
-                console.log(mouseIsDown);
-                if (mouseIsDown == true) {
-                    destination.x = lastMousePos.x - destination.options.clickOffset.x;
-                    destination.y = lastMousePos.y - destination.options.clickOffset.y;
-                }
-            })
+            }
             
             return display;
         })
@@ -85,4 +75,4 @@ function (cosmic, _, Kinetic, art) {
         .construct()
 
     return Destination;
-})
+})(cosmic, _, Kinetic, art);

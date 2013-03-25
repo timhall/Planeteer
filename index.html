@@ -19,41 +19,50 @@
             width: 100%;
             overflow: hidden;
         }
+        #experiment {
+            background: #fff;
+            margin: 30px 30px;
+            width: 800px;
+            height: 600px;
+        }
     </style>
+    <link rel="icon" 
+      type="image/ico" 
+      href="planeteer/favicon.ico">
 </head>
 <body>
 
-    <canvas id="game"></canvas>
-    
-
+    <div id="experiment"></div>
 
     <!-- JS Libraries -->
-    <script src="js/lib/fabric.min.js" type="text/javascript"></script>
-    <script src="js/rAF.js" type="text/javascript"></script>
-    <script src="js/lib/require.js" type="text/javascript"></script>
-    <!--<script src="" type="text/javascript"></script>-->
+    <script src="js/rAF.js"></script>
+    <script src="js/lib/lodash.min.js"></script>
+    <script src="js/lib/backbone-min.js"></script>
+    <script src="js/lib/kinetic-v4.2.0.min.js"></script>
     
-    <script type="text/javascript">
-        // create a wrapper around native canvas element (with id="c")
-        var canvas = new fabric.Canvas('game', { 
-            width: 600, height: 400,
-            backgroundColor: 'white'
-        });
-
-        canvas.setHeight(400);
-        canvas.setWidth(600);
-
-        // create a rectangle object
-        var rect = new fabric.Rect({
-            left: 500,
-            top: 300,
-            fill: 'red',
-            width: 20,
-            height: 20
-        });
-
-        // "add" rectangle onto canvas
-        canvas.add(rect);
-    </script>
+    <!-- Freebody -->
+    <script src="js/freebody/utils.js"></script>
+    <script src="js/freebody/Vector.js"></script>
+    <script src="js/freebody/Body.js"></script>
+    <script src="js/freebody/gravity.js"></script>
+    
+    <!-- Cosmic -->
+    <script src="js/cosmic/background.js"></script>
+    <script src="js/cosmic/environment.js"></script>
+    <script src="js/cosmic/CameraBase.js"></script>
+    <script src="js/cosmic/collisions.js"></script>
+    <script src="js/cosmic/Matter.js"></script>
+    <script src="js/cosmic/gamePiece.js"></script>
+    <script src="js/cosmic/KineticCamera.js"></script>
+    <script src="js/cosmic/ui.js"></script>
+    <script src="js/cosmic.js"></script>
+    
+    <!-- Planteer -->
+    <script src="js/art.js"></script>
+    <script src="js/Destination.js"></script>
+    <script src="js/Planet.js"></script>
+    <script src="js/Ship.js"></script>
+    <script src="js/planeteer.js"></script>
+    
 </body>
 </html>

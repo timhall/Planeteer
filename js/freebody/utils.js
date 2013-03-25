@@ -2,9 +2,11 @@
  * General-purpose utilities
  */
 
-define(
-[],
-function () {
+var freebody = freebody || {};
+
+//define(
+//[],
+freebody.utils = (function () {
     var utils = {},
         zeroPoint = { x: 0, y: 0 };
     
@@ -179,4 +181,4 @@ function () {
     };
     
     return utils;
-});
+})();

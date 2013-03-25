@@ -1,5 +1,5 @@
 require(
-['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet.new', 'Ship', 'Destination', 'cosmic/environment'],
+['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet', 'Ship', 'Destination', 'cosmic/environment'],
 function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environment) {
 
     environment.bounds.width *= 2;

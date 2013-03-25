@@ -14,9 +14,10 @@
  * Camera.prototype.renderLayer = function (layer) { ... };
  * 
  */
-define(
-['underscore', 'cosmic/environment'],
-function (_, environment) {
+//define(
+//['underscore', 'cosmic/environment'],
+var cosmic = cosmic || {};
+cosmic.CameraBase = (function (_, environment) {
     
     /**
      * Basic camera interface
@@ -28,8 +29,8 @@ function (_, environment) {
         
         this.position = { x: 0, y: 0 };
         this.scale = 1;
-        this.viewSize = {x: 800, y: 600};
         this.initSize = {x: 800, y: 600};
+        this.viewSize = {x: this.initSize.x / this.scale, y: this.initSize.y / this.scale};
         
         // Internal properties
         this._layers = {};
@@ -127,12 +128,14 @@ function (_, environment) {
     }
     
     CameraBase.prototype.reset = function () {
-        this.position.x = this.position.y = 0;
-        this.scale = 1;
-        this.following = null;
+        this.position.x = this.defaults.position.x;
+        this.position.y = this.defaults.position.y;
+        this.scale = this.defaults.scale;
+        this.following = this.defaults.following;
     }
     
     CameraBase.prototype.zoom = function (zoom) {
+        //Difficulty correctly initializing viewSize, causes jump on first instance of zoom. Currently hardcoded in planeteer.
         var newSize = {},
             center = {x:this.position.x + this.viewSize.x/2, y:this.position.y + this.viewSize.y/2};
         
@@ -141,8 +144,10 @@ function (_, environment) {
         newSize.x = this.initSize.x / zoom;
         newSize.y = this.initSize.y / zoom;
         
+        console.log(this.position.x + this.viewSize.x/2);
         this.position.x = center.x - newSize.x/2;
         this.position.y = center.y - newSize.y/2;
+        console.log(this.position.x + this.viewSize.x/2);
         
         this.viewSize.x = newSize.x;
         this.viewSize.y = newSize.y;
@@ -150,4 +155,4 @@ function (_, environment) {
     
     
     return CameraBase;
-});
+})(_, cosmic.environment);

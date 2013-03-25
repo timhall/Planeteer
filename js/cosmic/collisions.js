@@ -1,6 +1,7 @@
-define(
-['freebody', 'underscore'],
-function (freebody, _) {
+//define(
+//['freebody', 'underscore'],
+var cosmic = cosmic || {};
+cosmic.collisions = (function (freebody, _) {
     var collisions = {},
         utils = freebody.utils;
     
@@ -32,11 +33,14 @@ function (freebody, _) {
                     //    forceExertedOnCircle(this, obj);
                     //}
                     //forceExertedOnCircle(obj, this);
-                        console.log(this.options.type, obj.options.type);
+                        //console.log(this.options.type, obj.options.type);
                     if (this.options.type != 'Destination' && obj.options.type != 'Destination') {
-                        console.log(this.options.type, obj.options.type);
+                        //console.log(this.options.type, obj.options.type);
                         bounce(obj, this);
-                    }   
+                    }
+                    if (this.options.type == 'Planet' && obj.options.type == 'Planet') {
+                        cosmic.reset();
+                    }
                     return true;
                 };
             }     
@@ -308,4 +312,4 @@ function (freebody, _) {
     };
     
     return collisions;
-});
+})(freebody, _);

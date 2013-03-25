@@ -1,12 +1,13 @@
 /**
  * Hold matter and advance it through physics all together
  */
-define(
-['freebody', 'underscore'],
-function (freebody, _) {
+//define(
+//['freebody', 'underscore'],
+var cosmic = cosmic || {};
+cosmic.environment = (function (freebody, _) {
 
     var environment = {},
-        gravityScale = 1.9;
+        gravityScale = 1.82;
         
     environment.objects = [];
     environment.planets = [];
@@ -105,4 +106,4 @@ function (freebody, _) {
     };
     
     return environment;
-});
+})(freebody, _);

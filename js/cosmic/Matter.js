@@ -2,9 +2,10 @@
  * Matter in the universe with physics and display
  */
 
-define(
-['freebody', 'underscore', 'backbone'],
-function (freebody, _, Backbone) {
+//define(
+//['freebody', 'underscore', 'backbone'],
+var cosmic = cosmic || {};
+cosmic.Matter = (function (freebody, _, Backbone) {
     
     /**
      * Matter
@@ -68,4 +69,4 @@ function (freebody, _, Backbone) {
     );
     
     return Matter;
-});
+})(freebody, _, Backbone);

@@ -1,6 +1,6 @@
-define(
-['kinetic'],
-function (Kinetic) {
+//define(
+//['kinetic'],
+var art = (function (Kinetic) {
     var art = {};
     
     art.orange = function (group, radius, preScale) {
@@ -79,23 +79,31 @@ function (Kinetic) {
         group.add(new Kinetic.Path({
             data: 'M3.459-7.583l21.438,25.927c0,0-7.397,0.823-9.331,0c-1.934-0.823-4.761-4.253-4.761-4.253L3.917-2.864',
             fill: color,
-            stroke: '#000000',
+            stroke: '#2E2E2E',
             strokeWidth: 1// * postScale
         }));
         
         group.add(new Kinetic.Path({
             data: 'M-3.917-2.864l-6.888,16.955c0,0-2.827,3.43-4.761,4.253c-1.934,0.823-9.331,0-9.331,0L-3.731-7.583',
             fill: color,
-            stroke: '#000000',
+            stroke: '#2E2E2E',
             strokeWidth: 1// * postScale
         }));
         
         group.add(new Kinetic.Path({
             data: 'M3.917-2.864l1.899,19.602L3.917-2.864L2.659-21.319c0,0-0.826-3.577-2.659-3.577s-2.66,3.577-2.66,3.577L-3.917-2.864l-1.9,19.602l1.9-19.602l-6.888,16.955l0,0l4.988,2.647l-0.79,8.157l6.43-1.319l6.784,1.319l-0.791-8.157l4.989-2.647L3.917-2.864z',
             fill: '#A5A4A4',
-            stroke: '#000000',
+            stroke: '#2E2E2E',
             strokeWidth: 1// * postScale
         }));
+        group.add(new Kinetic.Circle({
+            radius: radius + 6,
+            stroke: '#FFFFFF',
+            strokewidth: 3,
+            fill: '#FFFFFF',
+            opacity: 0
+        }))
+        group.children[4].attrs.offset.y = -3;
         //console.log(group);
         
         return { group: group, preScale: preScale };
@@ -104,15 +112,26 @@ function (Kinetic) {
     art.destination = function(group, radius, preScale, color) {
         group.setScale(radius/25, radius/25);
         preScale = radius/25;
-        
-        group.add(new Kinetic.Circle({
-            radius: 25 + 10,    //The actual radius + radius/2 of the ship to fake having half of the ship in the circle
-            fill: '#87CEFA',
-            //opacity: 0.4,
-            stroke: '#00BFFF',
-            strokeWidth: 5,
-            strokeOpacity: 1
-        }))
+        if (group.children.length < 1) {
+            group.add(new Kinetic.Circle({
+                radius: 25 + 10,    //The actual radius + radius/2 of the ship to fake having half of the ship in the circle
+                fill: '#87CEFA',
+                opacity: 0.4,
+                //stroke: '#00BFFF',
+                //strokeWidth: 5,
+                dashArray: [12, 5],
+                strokeOpacity: 1
+            }))
+            group.add(new Kinetic.Circle({
+                radius: 27 + 10,
+                opacity: 0.5,
+                stroke: '#00BFFF',
+                strokeWidth: 3,
+                dashArray: [10, 3],
+                strokeOpacity: 1
+                
+            }))
+        }
         color = '#87CEFA';
         
         return {group: group, preScale: preScale, color: color };
@@ -128,6 +147,25 @@ function (Kinetic) {
         return group;
     }
     
+    art.background = function(group, stage) {
+        group.add(new Kinetic.Rect({
+            width: stage.attrs.width,
+            height: stage.attrs.height,
+            opacity: 1,
+            fill: '#000000'
+        }))
+        
+        for (var i = 0; i < 10; i++) {
+            group.add(new Kinetic.Circle({
+                radius: 10,
+                fill: '#FFFFFF',
+                x: Math.floor(Math.random()*stage.attrs.width),
+                y: Math.floor(Math.random()*stage.attrs.height)
+            }))
+        }
+        return group;
+    }
+    
     
     return art;
-})
+})(Kinetic);

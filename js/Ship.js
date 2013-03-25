@@ -1,6 +1,6 @@
-define(
-['cosmic', 'underscore', 'kinetic', 'art', 'freebody/Vector', 'freebody/utils'],
-function (cosmic, _, Kinetic, art, Vector, utils) {
+//define(
+//['cosmic', 'underscore', 'kinetic', 'art', 'freebody/Vector', 'freebody/utils', 'cosmic/CameraBase'],
+var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
 
     var Ship = cosmic.gamePiece()
         .defaults({
@@ -13,6 +13,7 @@ function (cosmic, _, Kinetic, art, Vector, utils) {
             postScale: 1,
             spin: false,
             jet: null,
+            jetting: 0,
             angle: null,
             spinCount: 0,
             type: 'Ship'
@@ -84,6 +85,7 @@ function (cosmic, _, Kinetic, art, Vector, utils) {
                     return force;
                 };
                 body.forces.push(t);
+                body.options.jetting = body.options.jet;
                 body.options.jet = null;
             }
             
@@ -92,14 +94,19 @@ function (cosmic, _, Kinetic, art, Vector, utils) {
             var ship = this;
             var display = new Kinetic.Group();
             
+            display.followClick = function (e) {
+                console.log('first');
+                cosmic.camera.follow(ship);
+            }
+            
+            display.select = function (e) {
+                cosmic.selected = ship;
+            }
+            
             this.options.preScale = 
                 art.fighter(display, this.options.radius, this.options.preScale, this.options.color).preScale;
             return display;
             
-             display.on('mousedown' || 'touchstart', function (e) {
-                 cosmic.selected = ship;
-                 console.log(cosmic.selected);
-            });
         })
         .events({
             'howdy': 'sayHowdy'
@@ -110,4 +117,4 @@ function (cosmic, _, Kinetic, art, Vector, utils) {
         .construct();
     
     return Ship;
-});
+})(cosmic, _, Kinetic, art, freebody.Vector, freebody.utils, cosmic.CameraBase);

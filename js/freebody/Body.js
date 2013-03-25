@@ -2,9 +2,10 @@
  * Body with mass, position, velocity, acceleration, and forces
  */
 
-define(
-['freebody/Vector', 'freebody/utils'],
-function (Vector, utils) {
+//define(
+//['freebody/Vector', 'freebody/utils'],
+var freebody = freebody || {};
+freebody.Body = (function (Vector, utils) {
     
     /**
      * @class Body
@@ -189,4 +190,4 @@ function (Vector, utils) {
     };
 
     return Body;
-});
+})(freebody.Vector, freebody.utils);

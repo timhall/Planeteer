@@ -1,6 +1,7 @@
-define(
-['cosmic/Matter', 'cosmic/collisions', 'underscore', 'kinetic'],
-function (Matter, collisions, _, Kinetic) {
+//define(
+//['cosmic/Matter', 'cosmic/collisions', 'underscore', 'kinetic'],
+var cosmic = cosmic || {};
+cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
 
     /**
      * Wrapper for "game piece" functionality
@@ -152,6 +153,4 @@ function (Matter, collisions, _, Kinetic) {
     // Finally, return
     return gamePiece;
 
-});
-
-
+})(cosmic.Matter, cosmic.collisions, _, Kinetic);

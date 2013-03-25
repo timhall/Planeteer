@@ -1,5 +1,5 @@
 require(
-['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet.new', 'Ship', 'cosmic/environment'],
+['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet', 'Ship', 'cosmic/environment'],
 function (cosmic, freebody, KineticCamera, Planet, Ship, environment) {
     
     // Set up ship and planets

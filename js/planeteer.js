@@ -1,89 +1,110 @@
-// Load all dependencies and start game
-require(    
-['freebody', 'Engine', 'Planet', 'Ship'],
-function (freebody, Engine, Planet, Ship) {
+//require(
+//['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet', 'Ship', 'Destination', 'cosmic/environment'],
+(function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environment) {
+
+    environment.bounds.width *= 2;
+    environment.bounds.height *= 2;
     
-    var Ticker = function (options) {
-        var ticker = this,
-            display,
-            objToWatch;
-        
-        ticker.draw = function () {
-            display.attr('text', 
-                'Fx: ' + Math.round(objToWatch.netForce().x(), 4) + ' | Fy: ' + -Math.round(objToWatch.netForce().y(), 4) + 
-                ' | Vx: ' + Math.round(objToWatch.v.x(), 4) + ' | Vy: ' + -Math.round(objToWatch.v.y(), 4) + 
-                ' | Px: ' + Math.round(objToWatch.x, 4) + ' | Py: ' + Math.round(objToWatch.y, 4));
-        };
-        
-        ticker.update = function (step) {
-           
-        };
-        
-        ticker.watch = function (obj) {
-            // Save ref to object
-            objToWatch = obj;
-        };
-        
-        ticker.create = function () {
-            display = new Text().addTo(stage).attr({
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '16',
-                textFillColor: 'black',
-                textStrokeColor: 'black',
-                x: 5,
-                y: 5
-            });            
-            return ticker;  
-        };
-        
-        return ticker.create();
-    };
+    // Set up ship and planets
+    var ship = [
+        new Ship({
+            color: 'yellow',
+            radius: 20,
+            mass: 1000,
+            x: 50,
+            y: 50,
+            name: 'Fighter'
+        })
+    ];
     
-    var engine = new Engine(),
-        
-        // Random colors for balls
-        colors = ['blue', 'red', 'yellow', 'green', 'orange'],
-        randomColor = function () {
-            return colors[Math.round(Math.random() * colors.length)];
-        },
-        
-        // Add ball to engine (which then updates and renders is)
-        addShip = function () {
-            // Create new ship            
-            var ship = new Ship({}, Circle, stage);
-            
-            // Apply gravity to ship
-            freebody.gravity.planetary(ship, planet1, 1.9);
-            freebody.gravity.planetary(ship, planet2, 1.9);
-            
-            // Add ship to engine
-            engine.objects.push(ship);
-            
-            // Finally, tell ticker to watch ship
-            ticker.watch(ship);
-        };
+    var planets = [
+        new Planet({
+            color: '#6BCAF3',
+            radius: 70,
+            mass: 10000000000000000,
+            x: 250,
+            y: 700,
+            image: 'blue',
+            name: 'Neptune'
+        }),
+        new Planet({
+            color: '#F16122',
+            radius: 100,
+            mass: 20000000000000000,
+            x: 950,
+            y: 500,
+            image: 'orange',
+            name: 'Jupiter'
+        })
+    ];
     
-    // Create new planet and add to engine
-    var planet1 = new Planet({ 
-        x: window.parent.innerWidth/3,
-        y: 2*window.parent.innerHeight/3 
-    }, Circle, stage);
-    engine.objects.push(planet1);
+    var destinations = [
+        new Destination({
+            color: null,
+            radius: 50,
+            x: 850,
+            y: 800,
+            name: 'Destination'
+        })    
+    ]
     
-    var planet2 = new Planet({ 
-        x: 2*window.parent.innerWidth/3,
-        y: window.parent.innerHeight/3 
-    }, Circle, stage);
-    engine.objects.push(planet2);
+    // Add ship and planets
+    for (var i = 0; i < planets.length; i++) {
+        cosmic.environment.addPlanet(planets[i]);
+    }
+    for (var i = 0; i < destinations.length; i++) {
+        cosmic.environment.addDestination(destinations[i]);
+    }
+    for (var i = 0; i < ship.length; i++) {
+        cosmic.environment.addBody(ship[i]);
+    }
     
-    // Create ticker
-    var ticker = new Ticker();
-    engine.objects.push(ticker);
+    // Setup camera
+    var camera = new KineticCamera('experiment');
+    camera.scale = 0.5;
+    camera.viewSize = {x:1600,y:1200}
+    camera.defaults = {
+        scale:0.5,
+        position:{x:0,y:0},
+        following:null
+    }
     
-    // Add ship to environment
-    addShip();
+    // Add layers
+    camera.layer('background', cosmic.background.objects);    
+    camera.layer('foreground', cosmic.environment.objects);
+    camera.layer('interface', cosmic.ui.objects)
     
-    // Finally, start the engine
-    engine.start();
+    // Set camera in cosmic
+    cosmic.camera = camera;
     
-});
+    // DEBUG
+    window.cosmic = cosmic;
+    window.camera = cosmic.camera;
+    window.environment = cosmic.environment;
+    window.ship = ship;
+    window.planets = planets;
+    window.destinations = destinations;
+    
+    // Start experiment:
+    console.log('Starting Planeteer');
+    cosmic.startRendering();
+})(cosmic, freebody, cosmic.KineticCamera, Planet, Ship, Destination, cosmic.environment);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

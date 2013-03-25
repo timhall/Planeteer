@@ -2,9 +2,10 @@
  * Vector class for simply representing force, velocity, etc.
  */
 
-define(
-['freebody/utils'],
-function (utils) {
+//define(
+//['freebody/utils'],
+var freebody = freebody || {};
+freebody.Vector = (function (utils) {
     
     /**
      * @class Vector
@@ -113,4 +114,4 @@ function (utils) {
     
     window.Vector = Vector;
     return Vector;
-});
+})(freebody.utils);
