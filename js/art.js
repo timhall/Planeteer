@@ -114,7 +114,7 @@ var art = (function (Kinetic) {
         preScale = radius/25;
         if (group.children.length < 1) {
             group.add(new Kinetic.Circle({
-                radius: 25 + 10,    //The actual radius + radius/2 of the ship to fake having half of the ship in the circle
+                radius: 23,    //The actual radius + radius/2 of the ship to fake having half of the ship in the circle
                 fill: '#87CEFA',
                 opacity: 0.4,
                 //stroke: '#00BFFF',
@@ -123,7 +123,7 @@ var art = (function (Kinetic) {
                 strokeOpacity: 1
             }))
             group.add(new Kinetic.Circle({
-                radius: 27 + 10,
+                radius: 25,
                 opacity: 0.5,
                 stroke: '#00BFFF',
                 strokeWidth: 3,

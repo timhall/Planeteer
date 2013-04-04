@@ -126,5 +126,57 @@ cosmic.ui = (function (_, Kinetic, utils) {
     
     ui.objects.push({ display: minimap, draw: mapUpdate});
     
+    var selection = new Kinetic.Group({
+        x: 160,
+        y: 400,
+        init: false
+    })
+    
+    /*selection.add(new Kinetic.Circle({
+        fill: 'white',
+        radius: 35
+    }));*/
+    
+    selection.add(new Kinetic.Text({
+        text: 'null',
+        textFill: 'white',
+        align: 'center',
+        width: 80
+    }))
+    
+    selection.add(new Kinetic.Group());
+    
+    var selectUpdate = function () {
+        if (!selection.attrs.init) {
+            selection.setX(cosmic.camera.stage.attrs.width - 220);
+            selection.setY(cosmic.camera.stage.attrs.height - 65);
+            selection.children[0].setOffset(40,-40);
+            
+            selection.attrs.init = true;
+        } 
+        
+        if (selection.children[1]) {
+            selection.children.splice(1,1);
+        }
+        
+        if (cosmic.selected) {
+            var selected = cosmic.selected;
+            selection.children[1] = cosmic.selected.display;
+            
+            selection.children[1].setX(selection.attrs.x);
+            selection.children[1].setY(selection.attrs.y);
+            selection.children[1].setScale(35/25/1.2),
+            selection.children[1].setRotation(0);
+        } else {
+            var selected = {options: {name: 'None'}};
+        }
+        
+        
+        
+        selection.children[0].setText(selected.options.name);
+    }
+    
+    ui.objects.push({ display: selection,  draw: selectUpdate});
+    
     return ui;
 })(_, Kinetic, freebody.utils);
