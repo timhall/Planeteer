@@ -30,7 +30,7 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                     this.display.children[0].setFill('#F78181');
                     console.log('destination colliding', this._resetting);
                     if (this.options._resetting == false) {
-                        this.options._destTime = cosmic.time;
+                        //this.options._destTime = cosmic.time;
                         cosmic.pausePhysics();
                         console.log(this.options.destTime, cosmic.time);
                     }
