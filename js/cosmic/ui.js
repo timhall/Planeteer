@@ -68,7 +68,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
     var minimap = new Kinetic.Group({
         x: 10,
         y: 10
-    })
+    });
     
     minimap.add(new Kinetic.Rect({
         width: 160,
@@ -108,7 +108,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
                 parObject: cosmic.camera,
                 width: 5,
                 height: 5
-            }))
+            }));
         }
         
         for (var i = 2; i < minimap.children.length; i++) {
@@ -122,9 +122,11 @@ cosmic.ui = (function (_, Kinetic, utils) {
         minimap.children[minimap.children.length-1].setWidth(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.x / 10);
         minimap.children[minimap.children.length-1].setHeight(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.y / 10);
         //console.log(minimap.children[2].attrs.parObject);
-;    }
+    };
     
     ui.objects.push({ display: minimap, draw: mapUpdate});
+    
+    //------------------------   SELECTION   --------------------------
     
     var selection = new Kinetic.Group({
         x: 160,
@@ -139,7 +141,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
     
     selection.add(new Kinetic.Text({
         text: 'null',
-        textFill: 'white',
+        fill: 'white',
         align: 'center',
         width: 80
     }))

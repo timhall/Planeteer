@@ -74,7 +74,7 @@ var art = (function (Kinetic) {
             fill:'orange',
             visible:false,
         }));
-        group.children[0].attrs.offset.y = -24
+        group.children[0].setOffset(0,-24);
         
         group.add(new Kinetic.Path({
             data: 'M3.459-7.583l21.438,25.927c0,0-7.397,0.823-9.331,0c-1.934-0.823-4.761-4.253-4.761-4.253L3.917-2.864',
@@ -103,7 +103,7 @@ var art = (function (Kinetic) {
             fill: '#FFFFFF',
             opacity: 0
         }))
-        group.children[4].attrs.offset.y = -3;
+        group.children[4].setOffset(0,-3);
         //console.log(group);
         
         return { group: group, preScale: preScale };

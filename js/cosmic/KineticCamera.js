@@ -87,6 +87,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 var _mouseMove = {x: 0, y: 0};
                 this.stage.on('mousedown' || 'touchstart', function (e) {
                     var shape = getShape(e);
+                    console.log(e);
                     if (!shape.isTracking && !e.ctrlKey && !e.shiftKey) {
                         //cosmic.pausePhysics();
                         _selected = shape;
@@ -145,7 +146,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
             }
             
             var getShape = function (event) {
-                var shape = event && event.shape;
+                var shape = event && event.targetNode;
                 if (shape) {
                     while (shape.parent.nodeType != 'Layer') { shape = shape.parent; }
                 }
