@@ -16,7 +16,10 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
             jetting: 0,
             angle: null,
             spinCount: 0,
-            type: 'Ship'
+            type: 'Ship',
+            path: [],
+            pathTime: null,
+            pathShow: 3000
         })
         .methods({
             draw: function (offset, zoom) {
@@ -58,13 +61,14 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                     this.thrust(this);
                     
                 }
+                
+                
             },
             
             collide: function (obj) {
                 if (obj.options.type != 'Destination') {
                     this.options.spin = !this.options.spin;
                 }
-                //console.log('SCREW YOU')
             },
             
             sayHowdy: function () {
@@ -87,6 +91,15 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 body.forces.push(t);
                 body.options.jetting = body.options.jet;
                 body.options.jet = null;
+            },
+            
+            pathRun: function (ms, timestep, timestamp) {
+                //console.log(this.netForce(), this.v);
+                this.options.path = this.path(ms, timestep, timestamp);
+                this.options.pathTime = cosmic.time;
+                //console.log(this.netForce(), this.v, this.options.path[99]);
+                //console.log(this.options.path, this.options.pathTime);
+                //_.each(_pathClone)
             }
             
         })

@@ -1,6 +1,6 @@
 //define(
 //['cosmic/Matter', 'cosmic/environment', 'cosmic/CameraBase', 'cosmic/collisions', 'cosmic/gamePiece', 'cosmic/KineticCamera'],
-(function (_, Backbone, Matter, environment, CameraBase, collisions, gamePiece, KineticCamera, ui, background) {
+(function (_, Backbone, Matter, environment, CameraBase, collisions, gamePiece, KineticCamera, ui, background, paths) {
     var rAF = window.requestAnimationFrame,
         _paused = false,
         _pausedPhysics = false,
@@ -15,6 +15,7 @@
     cosmic.environment = environment;
     cosmic.ui = ui;
     cosmic.background = background;
+    cosmic.paths = paths;
     cosmic.iteration = 1;
     
 
@@ -70,10 +71,19 @@
     cosmic.unpause = function () {
         _paused = false;
         _pausedPhysics = false;
+       
+        //somewhat janky logic
+        //mousedown forces pause and mouseup forces unpause
+        //so it can be assumed that every player action is associated with an unpause
+        //therefore it refreshes on each unpause
+       
+        _.each(environment.objects, function (obj) {
+            if (obj.pathRun) {obj.pathRun(10000, 100, cosmic.time);}
+        });
     }
   
     cosmic.step = function () {
         cosmic.start();
         cosmic.pause();
     };
-})(_, Backbone, cosmic.Matter, cosmic.environment, cosmic.CameraBase, cosmic.collisions, cosmic.gamePiece, cosmic.KineticCamera, cosmic.ui, cosmic.background);
+})(_, Backbone, cosmic.Matter, cosmic.environment, cosmic.CameraBase, cosmic.collisions, cosmic.gamePiece, cosmic.KineticCamera, cosmic.ui, cosmic.background, cosmic.paths);

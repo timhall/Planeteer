@@ -48,7 +48,6 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                 art.destination(display, this.options.radius, this.options.preScale, this.options.color).color;
             
             // Attach events
-            var mouseIsDown = false;
             display.move = function (e) {
                 destination.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
                 destination.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;

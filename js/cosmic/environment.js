@@ -82,6 +82,15 @@ cosmic.environment = (function (freebody, _) {
             _.each(environment.objects, function (obj) {
                 environment.outOfBounds(obj);
             });
+            
+            // Check for path refresh timing and run if necessary
+            _.each(environment.objects, function (obj) {
+                if (_.isFunction(obj.pathRun)) {
+                    if (obj.options.pathTime && cosmic.time - obj.options.pathTime > 7000) {
+                        obj.pathRun(10000, 100, cosmic.time);
+                    }
+                }
+            });
         }
     };
     

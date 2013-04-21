@@ -109,6 +109,8 @@ freebody.utils = (function () {
     // Lodash methods
     // [Lo-Dash](http://lodash.com/)
     
+    var toString = Object().toString;
+    
     /**
      * Checks if `value` is a number
      *
@@ -136,7 +138,7 @@ freebody.utils = (function () {
     if (utils.isFunction(/x/)) {
         utils.isFunction = function(value) {
           return toString.call(value) == '[object Function]';
-        };
+        }
     }
     
     /**
@@ -430,15 +432,18 @@ freebody.Body = (function (Vector, utils) {
         for (var i = 0, max = body.forces.length; i < max; i += 1) {
             // If force is function evaluate to get vector
             forceValue = utils.isFunction(body.forces[i]) 
-                ? body.forces[i]() 
+                ? body.forces[i](body) 
                 : body.forces[i];
             
             netForceX += forceValue.x();
             netForceY += forceValue.y();
         }
         
+        // Get existing net force or create new vector
+        this._netForce = this._netForce || new Vector();
+        
         // Set the x and y components of the net force
-        return new Vector().x(netForceX).y(netForceY);
+        return this._netForce.x(netForceX).y(netForceY);
     };
     
     /**
@@ -448,16 +453,19 @@ freebody.Body = (function (Vector, utils) {
      * @param {Number} timestep
      * @returns {Array} path points ({ x, y })
      */
-    Body.prototype.path = function (ms, timestep) {
+    Body.prototype.path = function (ms, timestep, timestamp) {
         // Maybe just create a clone of 'this'
         // and advance...
         
-        var clone = cloneBody(this),
+        var clone = this.clone(),
             elapsed = 0,
             path = [],
-            stopAdvance;
+            stopAdvance,
+            _time,
+            passes = 0;
             
         timestep = timestep || Body.options.timestep;
+        _time = timestamp || 0;
         
         if (timestep > 0) {
             // Create stop advance callback
@@ -469,11 +477,30 @@ freebody.Body = (function (Vector, utils) {
                 
                 // Move object and store position
                 clone.move(timestep);
-                path.push({x:clone.x, y:clone.y});
+                path.push({x:clone.x, y:clone.y, t:(_time + _time*passes)});
+                passes++;
             }
         }
         window.body = clone;
         return path;
+    }
+    
+    /**
+     * Get a clone of the body
+     *
+     * @returns {Body}
+     */
+    Body.prototype.clone = function () {
+        var original = this,
+            cloned = new Body({
+                mass: original.mass,
+                x: original.x,
+                y: original.y
+            });
+        cloned.v = new freebody.Vector(original.v.magnitude(), original.v.angle());
+        cloned.a = new freebody.Vector(original.a.magnitude(), original.a.angle());
+        cloned.forces = original.forces;  
+        return cloned;
     }
     
     // Create stop advance callback based on the specified limit
@@ -497,13 +524,6 @@ freebody.Body = (function (Vector, utils) {
             return elapsed >= limit;       
         }
     };
-    
-    var cloneBody = function (original) {
-        var clone = new Body(original);
-        clone.forces = original.forces;  
-        console.log(original, clone);
-        return clone;
-    }
 
     return Body;
 })(freebody.Vector, freebody.utils);    
@@ -529,7 +549,7 @@ freebody.gravity = (function (Vector, utils) {
         acceleration = acceleration || G_EARTH;
         
         // Gravitational force (not acceleration)
-        var g = function(){
+        var g = function(body){
             force.magnitude(acceleration * body.mass);
             return force;
         };
@@ -554,7 +574,7 @@ freebody.gravity = (function (Vector, utils) {
         power = power || 2;
         
         // Gravitation force
-        var g = function() {
+        var g = function(body) {
             force.magnitude(
                 GM / Math.pow(utils.distance(body, planet), power) * body.mass    
             );

@@ -29,7 +29,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
         align: 'left',
         fontFamily: 'Calibri',
         fontSize: 12,
-        textFill: 'white'
+        fill: 'white'
     }));
     
 
@@ -86,7 +86,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
         y: -2,
         opacity: 0.5
     }));
-    console.log(cosmic.environment);
+    //console.log(cosmic.environment);
     
     var mapUpdate = function () {
         minimap.setX(cosmic.camera.stage.attrs.width - 165);
@@ -164,6 +164,10 @@ cosmic.ui = (function (_, Kinetic, utils) {
         if (cosmic.selected) {
             var selected = cosmic.selected;
             selection.children[1] = cosmic.selected.display;
+            
+            if (cosmic.selected.options.type == 'Ship' && cosmic.selected.display.children[0].shapeType == 'Spline') {
+                selection.children[1].children.splice(0,2);
+            }
             
             selection.children[1].setX(selection.attrs.x);
             selection.children[1].setY(selection.attrs.y);

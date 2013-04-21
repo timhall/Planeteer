@@ -89,7 +89,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                     var shape = getShape(e);
                     console.log(e);
                     if (!shape.isTracking && !e.ctrlKey && !e.shiftKey) {
-                        //cosmic.pausePhysics();
+                        cosmic.pausePhysics();
                         _selected = shape;
                         if (shape.select) {    
                             shape.select(e);

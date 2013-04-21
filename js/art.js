@@ -69,6 +69,15 @@ var art = (function (Kinetic) {
         group.setScale(radius/25, radius/25);
         preScale = radius/25;
         
+        group.add(new Kinetic.Spline({
+            points: [{x:0,y:0}, {x:10,y:10}],
+            stroke: '#00BFFF',
+            strokeWidth: 3,
+            opacity: 0,
+            tension: 1,
+            rotationDeg:270
+        }));
+        
         group.add(new Kinetic.Path({
             data:'M-5.607,0c0,0,3.357,10.105,5.607,10.105S5.607,0,5.607,0',     //'M-5.607,23.895C-5.607,23.895-2.25,34,0,34s5.607-10.105,5.607-10.105', Old, aligned
             fill:'orange',
@@ -121,7 +130,7 @@ var art = (function (Kinetic) {
                 //strokeWidth: 5,
                 dashArray: [12, 5],
                 strokeOpacity: 1
-            }))
+            }));
             group.add(new Kinetic.Circle({
                 radius: 25,
                 opacity: 0.5,
@@ -130,7 +139,7 @@ var art = (function (Kinetic) {
                 dashArray: [10, 3],
                 strokeOpacity: 1
                 
-            }))
+            }));
         }
         color = '#87CEFA';
         

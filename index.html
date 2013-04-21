@@ -25,6 +25,12 @@
             width: 800px;
             height: 600px;
         }
+        #notes {
+            position:absolute;
+            top:30px;
+            left:860px;
+            width:360px;
+        }
     </style>
     <link rel="icon" 
       type="image/ico" 
@@ -33,12 +39,16 @@
 <body>
 
     <div id="experiment"></div>
-
+    
+    <div id="notes">
+        <li>Predictions are very close but wrong, especially near planets.</li>
+    </div>
+    
     <!-- JS Libraries -->
     <script src="js/rAF.js"></script>
     <script src="js/lib/underscore-min.js"></script>
     <script src="js/lib/backbone-min.js"></script>
-    <script src="js/lib/kinetic-v4.4.0.min.js"></script>
+    <script src="js/lib/kinetic-v4.4.1.js"></script>
     
     <!-- Freebody -->
     <script src="js/lib/freebody.js"></script>
@@ -53,6 +63,7 @@
     <script src="js/cosmic/gamePiece.js"></script>
     <script src="js/cosmic/KineticCamera.js"></script>
     <script src="js/cosmic/ui.js"></script>
+    <script src="js/cosmic/paths.js"></script>
     <script src="js/cosmic.js"></script>
     
     <!-- Planteer -->

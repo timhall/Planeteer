@@ -70,7 +70,7 @@ cosmic.background = (function (_, Kinetic) {
         stroke: '#00BFFF',
         opacity: 0.5,
         strokeWidth: 6,
-        dashArray: [20,10]
+        dashArray: [25,15]
     })
     
     var moveBound = function () {
