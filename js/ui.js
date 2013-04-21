@@ -1,4 +1,3 @@
-var cosmic = cosmic || {};
 cosmic.ui = (function (_, Kinetic, utils) {
 
     var ui = {};

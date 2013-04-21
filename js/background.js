@@ -1,4 +1,3 @@
-var cosmic = cosmic || {};
 cosmic.background = (function (_, Kinetic) {
 
     var background = {};
@@ -83,18 +82,5 @@ cosmic.background = (function (_, Kinetic) {
     
     background.objects.push({display: boundary, draw: moveBound});
     
-    
-    
     return background;
 })(_, Kinetic);
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,3 @@
-//define(
-//['cosmic/CameraBase', 'underscore', 'kinetic'],
-var cosmic = cosmic || {};
 cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
     /**
      * Camera implmentation using Kinetic

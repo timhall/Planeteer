@@ -1,6 +1,3 @@
-//define(
-//['cosmic/Matter', 'cosmic/collisions', 'underscore', 'kinetic'],
-var cosmic = cosmic || {};
 cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
 
     /**

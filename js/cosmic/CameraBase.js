@@ -14,9 +14,6 @@
  * Camera.prototype.renderLayer = function (layer) { ... };
  * 
  */
-//define(
-//['underscore', 'cosmic/environment'],
-var cosmic = cosmic || {};
 cosmic.CameraBase = (function (_, environment) {
     
     /**

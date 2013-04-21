@@ -1,4 +1,3 @@
-var cosmic = cosmic || {};
 cosmic.paths = (function (_, Kinetic, utils) {
 
     var paths = {};
@@ -65,7 +64,7 @@ cosmic.paths = (function (_, Kinetic, utils) {
         _.each(pathContainer.children, function(obj) {
             obj.attrs.points.length = pathList[obj.index].interval/100;
             var t = obj.getPoints()[0].t;
-            console.log(t);
+            //console.log(t);
             /*while (t <= cosmic.time) {
                 obj.setPoints(
                     function () {

@@ -1,10 +1,6 @@
 /**
  * Matter in the universe with physics and display
  */
-
-//define(
-//['freebody', 'underscore', 'backbone'],
-var cosmic = cosmic || {};
 cosmic.Matter = (function (freebody, _, Backbone) {
     
     /**

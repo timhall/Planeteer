@@ -1,6 +1,3 @@
-//define(
-//['freebody', 'underscore'],
-var cosmic = cosmic || {};
 cosmic.collisions = (function (freebody, _) {
     var collisions = {},
         utils = freebody.utils;
