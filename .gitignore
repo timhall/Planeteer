@@ -1,7 +1,9 @@
 node_modules/
 components/
 .c9revisions/
-
+.grunt/
+npm-debug.log
+_SpecRunner.html
 
 #################
 ## Eclipse
@@ -142,7 +144,6 @@ Desktop.ini
 *.egg
 *.egg-info
 dist
-build
 eggs
 parts
 bin
