@@ -69,7 +69,7 @@
     
     // Add layers
     camera.layer('background', cosmic.background.objects);
-    //camera.layer('paths', cosmic.paths.objects);
+    camera.layer('paths', cosmic.paths.objects);
     camera.layer('foreground', cosmic.environment.objects);
     camera.layer('interface', cosmic.ui.objects)
     

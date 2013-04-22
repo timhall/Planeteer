@@ -23,9 +23,10 @@ cosmic.paths = (function (_, Kinetic, utils) {
                     pathList.push({path: obj.options.path, time: obj.options.pathTime, interval: obj.options.pathShow});
                 }
             })
-            //console.log(pathList);
+            console.log(pathList);
             
             _.each(pathList, function (obj) {
+                console.log(obj);
                 pathContainer.add(new Kinetic.Spline({
                     points: obj.path,
                     stroke: '#00BFFF',
