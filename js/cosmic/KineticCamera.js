@@ -14,8 +14,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
         });
         
         this._displayLayers = {};
-        this._initTracking();
-        //console.log(this);
+        setupTracking.call(this);
     };
     
     _.extend(KineticCamera.prototype, CameraBase.prototype, {
@@ -61,95 +60,81 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 displayLayer.add(obj.display)
                 obj.display.layer = displayLayer.name;
             }  
-        },
-        
-        _initTracking: function () {
-            if (this.stage) {
-                //var trackingObject = new Kinetic.Group();
-                //art.background(trackingObject, this.stage);
-                var trackingObject = new Kinetic.Rect({
-                    width: this.stage.attrs.width,
-                    height: this.stage.attrs.height,
-                    opacity: 1,
-                    fill: '#FFFFFFF'
-                });
-                trackingObject.isTracking = true;
-                
-                this.layer('tracking', [
-                    { display: trackingObject }
-                ]);
-                
-                var _selected;
-                var _dragging;
-                var _mouseMove = {x: 0, y: 0};
-                this.stage.on('mousedown' || 'touchstart', function (e) {
-                    var shape = getShape(e);
-                    console.log(e);
-                    if (!shape.isTracking && !e.ctrlKey && !e.shiftKey) {
-                        cosmic.pausePhysics();
-                        _selected = shape;
-                        if (shape.select) {    
-                            shape.select(e);
-                        } else {
-                            cosmic.selected = null;
-                        }
-                    }
-                    if (e.ctrlKey && !e.shiftKey) {
-                        //camera.center(shape);
-                        cosmic.camera.following = null;
-                        var prePosX = cosmic.camera.position.x;
-                        var prePosY = cosmic.camera.position.y;
-                        cosmic.camera.position.x = ((e.layerX)/cosmic.camera.scale) + prePosX - (400/cosmic.camera.scale);
-                        cosmic.camera.position.y = ((e.layerY)/cosmic.camera.scale) + prePosY - (300/cosmic.camera.scale);
-                    }
-                    if (e.shiftKey) {
-                        cosmic.camera.following = null;
-                        _dragging = true;
-                        _mouseMove.x = e.layerX;
-                        _mouseMove.y = e.layerY;
-                    }
-                    if (e.shiftKey && e.ctrlKey) {
-                        console.log(shape);
-                        _selected = shape;
-                        _selected.followClick(e);
-                        if (shape.select) {    
-                            shape.select(e);
-                        }
-                    }
-                    
-                });
-                this.stage.on('mousemove' || 'touchmove', function (e) {
-                    if (_selected && !e.shiftKey) {
-                        _selected.move(e);
-                        //console.log(e);
-                    }
-                    if (e.shiftKey && _dragging) {
-                        cosmic.camera.position.x += (_mouseMove.x - e.layerX)/cosmic.camera.scale;
-                        cosmic.camera.position.y += (_mouseMove.y - e.layerY)/cosmic.camera.scale;
-                        _mouseMove.x = e.layerX;
-                        _mouseMove.y = e.layerY;
-                    }
-                });
-                this.stage.on('mouseup' || 'touchend', function (e) {
-                    _selected = _dragging = undefined;
-                    cosmic.unpause();
-                });
-                
-                document.addEventListener('mousewheel', function (e) {
-                   if (cosmic.camera.scale + e.wheelDeltaY/1440 > 0.15 && cosmic.camera.scale + e.wheelDeltaY/1440 < 2) {
-                        cosmic.camera.zoom(cosmic.camera.scale + (cosmic.camera.scale*e.wheelDeltaY/1440));
-                   }
-                }, true);
-            }
-            
-            var getShape = function (event) {
-                var shape = event && event.targetNode;
-                if (shape) {
-                    while (shape.parent.nodeType != 'Layer') { shape = shape.parent; }
-                }
-                return shape;
-            }
         }
     });
+
+    var setupTracking = function () {
+        var following, selected;
+
+        if (this.stage) {
+            // Setup full size rectangle to track clicks
+            var tracking = new Kinetic.Rect({
+                width: this.stage.attrs.width,
+                height: this.stage.attrs.height,
+                opacity: 0
+            });
+            tracking.isTrackingLayer = true;
+
+            // Add tracking layer
+            this.layer('tracking', [
+                { display: tracking }
+            ]);
+
+            // "Touch start" event handler
+            var touchstart = function (e) {
+                // Trigger touchstart on shape
+                var shape = getShape(e);
+                if (shape && shape.underlying && shape.underlying.trigger) {
+                    shape.underlying.trigger('touchstart', e);
+                    cosmic.selected = selected = shape;
+                }
+                
+                // Trigger touchstart on hub
+                cosmic.hub.trigger('touchstart', e, selected);
+                following = true;
+            };
+
+            // "Touch move" event handler
+            var touchmove = function (e) {
+                if (following) {
+                    if (selected && selected.underlying && selected.underlying.trigger) {
+                        selected.underlying.trigger('touchmove', e);
+                    }
+
+                    cosmic.hub.trigger('touchmove', e, selected);   
+                }
+            };
+
+            // "Touch end" event handler
+            var touchend = function (e) {
+                if (selected && selected.underlying && selected.underlying.trigger) {
+                    selected.underlying.trigger('touchend', e);
+                }
+
+                cosmic.hub.trigger('touchend', e);
+                cosmic.selected = selected = undefined;
+                following = false;
+            }
+
+            // Setup event listeners
+            this.stage.on('mousedown' || 'touchstart', touchstart);
+            this.stage.on('mousemove' || 'touchmove', touchmove);
+            this.stage.on('mouseup' || 'touchend', touchend);
+        }
+    };
+
+    var getShape = function (event) {
+        // Pull targetNode (set up by Kinetic)
+        var shape = event && event.targetNode;
+
+        // Find root shape
+        if (shape) {
+            while (shape.parent.nodeType != 'Layer') { shape = shape.parent; }
+        }
+
+        return shape;
+    };
+
     return KineticCamera;
+
 })(cosmic.CameraBase, _, Kinetic);

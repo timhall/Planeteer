@@ -4,6 +4,9 @@ var cosmic = (function(global, _, Backbone, undefined){
     // Define and export the freebody namespace
     var cosmic = {};
 
+    // Add events
+    cosmic.hub = Backbone.Events;
+    
 /**
  * Hold matter and advance it through physics all together
  */
@@ -15,7 +18,6 @@ cosmic.environment = (function (freebody, _) {
     environment.objects = [];
     environment.planets = [];
     environment.bodies = [];
-    environment.paused = false;
     
     environment.bounds = {
         width: 800,
@@ -29,9 +31,6 @@ cosmic.environment = (function (freebody, _) {
     environment.addPlanet = function (planet) {
         this.addObject(planet, 'planet');
     };
-    environment.addDestination = function (destination) {
-        this.addObject(destination, 'destination')
-    }
     
     /**
      * Add object (of type) to environment
@@ -42,13 +41,13 @@ cosmic.environment = (function (freebody, _) {
     environment.addObject = function (object, type) {
         environment.objects.push(object);
         
-        if (type == 'planet') {
+        if (type === 'planet') {
             // Add as planet and apply gravity from planet to all bodies
             environment.planets.push(object);
             _.each(environment.bodies, function (body){
                 freebody.gravity.planetary(body, object, gravityScale);
             })
-        } else if (type == 'body') {
+        } else if (type === 'body') {
             // Add as body and apply gravity from all planets to body
             environment.bodies.push(object);
             _.each(environment.planets, function (planet) {
@@ -63,38 +62,36 @@ cosmic.environment = (function (freebody, _) {
      * @param {Number} timestep to advance by
      */
     environment.advance = function (timestep) {
-        if (this.paused == false) {
-            // Advance physics for objects by timestep
-            _.each(environment.objects, function (obj) {
-                if (_.isFunction(obj.advance)) {
-                    obj.advance(timestep);
-                }
-            });
+        // Advance physics for objects by timestep
+        _.each(environment.objects, function (obj) {
+            if (_.isFunction(obj.advance)) {
+                obj.advance(timestep);
+            }
+        });
             
-            // Check for collisions
-            _.each(environment.objects, function (obj, i) {
-                if (_.isFunction(obj.collision)) {
-                    // Check for collision with remaining objects
-                    for (var j = i + 1; j < environment.objects.length; j += 1) {
-                        obj.collision(environment.objects[j]);
-                    }
+        // Check for collisions
+        _.each(environment.objects, function (obj, i) {
+            if (_.isFunction(obj.collision)) {
+                // Check for collision with remaining objects
+                for (var j = i + 1; j < environment.objects.length; j += 1) {
+                    obj.collision(environment.objects[j]);
                 }
-            });
+            }
+        });
             
-            // Check for out-of-bounds
-            _.each(environment.objects, function (obj) {
-                environment.outOfBounds(obj);
-            });
+        // Check for out-of-bounds
+        _.each(environment.objects, function (obj) {
+            environment.outOfBounds(obj);
+        });
             
-            // Check for path refresh timing and run if necessary
-            _.each(environment.objects, function (obj) {
-                if (_.isFunction(obj.pathRun)) {
-                    if (obj.options.pathTime && cosmic.time - obj.options.pathTime > 7000) {
-                        obj.pathRun(10000, 100, cosmic.time);
-                    }
+        // Check for path refresh timing and run if necessary
+        _.each(environment.objects, function (obj) {
+            if (_.isFunction(obj.pathRun)) {
+                if (obj.options.pathTime && cosmic.time - obj.options.pathTime > 7000) {
+                    obj.pathRun(10000, 100, cosmic.time);
                 }
-            });
-        }
+            }
+        });
     };
     
     /**
@@ -828,8 +825,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
         });
         
         this._displayLayers = {};
-        this._initTracking();
-        //console.log(this);
+        setupTracking.call(this);
     };
     
     _.extend(KineticCamera.prototype, CameraBase.prototype, {
@@ -875,173 +871,171 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 displayLayer.add(obj.display)
                 obj.display.layer = displayLayer.name;
             }  
-        },
-        
-        _initTracking: function () {
-            if (this.stage) {
-                //var trackingObject = new Kinetic.Group();
-                //art.background(trackingObject, this.stage);
-                var trackingObject = new Kinetic.Rect({
-                    width: this.stage.attrs.width,
-                    height: this.stage.attrs.height,
-                    opacity: 1,
-                    fill: '#FFFFFFF'
-                });
-                trackingObject.isTracking = true;
-                
-                this.layer('tracking', [
-                    { display: trackingObject }
-                ]);
-                
-                var _selected;
-                var _dragging;
-                var _mouseMove = {x: 0, y: 0};
-                this.stage.on('mousedown' || 'touchstart', function (e) {
-                    var shape = getShape(e);
-                    console.log(e);
-                    if (!shape.isTracking && !e.ctrlKey && !e.shiftKey) {
-                        cosmic.pausePhysics();
-                        _selected = shape;
-                        if (shape.select) {    
-                            shape.select(e);
-                        } else {
-                            cosmic.selected = null;
-                        }
-                    }
-                    if (e.ctrlKey && !e.shiftKey) {
-                        //camera.center(shape);
-                        cosmic.camera.following = null;
-                        var prePosX = cosmic.camera.position.x;
-                        var prePosY = cosmic.camera.position.y;
-                        cosmic.camera.position.x = ((e.layerX)/cosmic.camera.scale) + prePosX - (400/cosmic.camera.scale);
-                        cosmic.camera.position.y = ((e.layerY)/cosmic.camera.scale) + prePosY - (300/cosmic.camera.scale);
-                    }
-                    if (e.shiftKey) {
-                        cosmic.camera.following = null;
-                        _dragging = true;
-                        _mouseMove.x = e.layerX;
-                        _mouseMove.y = e.layerY;
-                    }
-                    if (e.shiftKey && e.ctrlKey) {
-                        console.log(shape);
-                        _selected = shape;
-                        _selected.followClick(e);
-                        if (shape.select) {    
-                            shape.select(e);
-                        }
-                    }
-                    
-                });
-                this.stage.on('mousemove' || 'touchmove', function (e) {
-                    if (_selected && !e.shiftKey) {
-                        _selected.move(e);
-                        //console.log(e);
-                    }
-                    if (e.shiftKey && _dragging) {
-                        cosmic.camera.position.x += (_mouseMove.x - e.layerX)/cosmic.camera.scale;
-                        cosmic.camera.position.y += (_mouseMove.y - e.layerY)/cosmic.camera.scale;
-                        _mouseMove.x = e.layerX;
-                        _mouseMove.y = e.layerY;
-                    }
-                });
-                this.stage.on('mouseup' || 'touchend', function (e) {
-                    _selected = _dragging = undefined;
-                    cosmic.unpause();
-                });
-                
-                document.addEventListener('mousewheel', function (e) {
-                   if (cosmic.camera.scale + e.wheelDeltaY/1440 > 0.15 && cosmic.camera.scale + e.wheelDeltaY/1440 < 2) {
-                        cosmic.camera.zoom(cosmic.camera.scale + (cosmic.camera.scale*e.wheelDeltaY/1440));
-                   }
-                }, true);
-            }
-            
-            var getShape = function (event) {
-                var shape = event && event.targetNode;
-                if (shape) {
-                    while (shape.parent.nodeType != 'Layer') { shape = shape.parent; }
-                }
-                return shape;
-            }
         }
     });
+
+    var setupTracking = function () {
+        var following, selected;
+
+        if (this.stage) {
+            // Setup full size rectangle to track clicks
+            var tracking = new Kinetic.Rect({
+                width: this.stage.attrs.width,
+                height: this.stage.attrs.height,
+                opacity: 0
+            });
+            tracking.isTrackingLayer = true;
+
+            // Add tracking layer
+            this.layer('tracking', [
+                { display: tracking }
+            ]);
+
+            // "Touch start" event handler
+            var touchstart = function (e) {
+                // Trigger touchstart on shape
+                var shape = getShape(e);
+                if (shape && shape.underlying && shape.underlying.trigger) {
+                    shape.underlying.trigger('touchstart', e);
+                    cosmic.selected = selected = shape;
+                }
+                
+                // Trigger touchstart on hub
+                cosmic.hub.trigger('touchstart', e, selected);
+                following = true;
+            };
+
+            // "Touch move" event handler
+            var touchmove = function (e) {
+                if (following) {
+                    if (selected && selected.underlying && selected.underlying.trigger) {
+                        selected.underlying.trigger('touchmove', e);
+                    }
+
+                    cosmic.hub.trigger('touchmove', e, selected);   
+                }
+            };
+
+            // "Touch end" event handler
+            var touchend = function (e) {
+                if (selected && selected.underlying && selected.underlying.trigger) {
+                    selected.underlying.trigger('touchend', e);
+                }
+
+                cosmic.hub.trigger('touchend', e);
+                cosmic.selected = selected = undefined;
+                following = false;
+            }
+
+            // Setup event listeners
+            this.stage.on('mousedown' || 'touchstart', touchstart);
+            this.stage.on('mousemove' || 'touchmove', touchmove);
+            this.stage.on('mouseup' || 'touchend', touchend);
+        }
+    };
+
+    var getShape = function (event) {
+        // Pull targetNode (set up by Kinetic)
+        var shape = event && event.targetNode;
+
+        // Find root shape
+        if (shape) {
+            while (shape.parent.nodeType != 'Layer') { shape = shape.parent; }
+        }
+
+        return shape;
+    };
+
     return KineticCamera;
+
 })(cosmic.CameraBase, _, Kinetic);
 
-var rAF = window.requestAnimationFrame,
-    _paused = false,
-    _pausedPhysics = false,
-    initStart = false,
-    selected = {};
-
-cosmic.start = function () {
-    cosmic.unpause();
-    cosmic.progress();
-};
-cosmic.startRendering = function () {
-    cosmic.unpause();
-    cosmic.pausePhysics();
-    cosmic.progress();
-};
-
-cosmic.progress = function (timestamp) {
-    if (!_paused) {    
-        // Setup next progress
-        rAF(cosmic.progress);
-              
-        if (!_pausedPhysics) {
-            //console.log(_paused)
-            // Update physics
-            cosmic.environment.advance(timestamp - (cosmic.time || timestamp));
-        }
-              
-        // Update time
-        cosmic.time = timestamp;
-              
-        // Render updated objects
-        if (cosmic.beforeRender) { cosmic.beforeRender(); }
-              
-        if (cosmic.camera) {      
-            cosmic.camera.render();
-        }
-    }
-};
+cosmic.playback = (function (global, hub) {
+    var rAF = global.requestAnimationFrame,
+        paused = { progress: false, render: false, physics: false },
+        running = false,
+        requestId;
     
-cosmic.reset = function () {
-    _.each(cosmic.environment.objects, function (object) {
-        object.x = Math.floor(Math.random()*1400 + 100);
-        object.y = Math.floor(Math.random()*1200 + 100);
-        cosmic.camera.reset();
-        cosmic.iteration += 1;
-        console.log(cosmic.iteration);
-    })
-}
-  
-cosmic.pause = function () {
-    _paused = true;
-};
-cosmic.pausePhysics = function () {
-    _pausedPhysics = true;
-};
-cosmic.unpause = function () {
-    _paused = false;
-    _pausedPhysics = false;
-       
-    //somewhat janky logic
-    //mousedown forces pause and mouseup forces unpause
-    //so it can be assumed that every player action is associated with an unpause
-    //therefore it refreshes on each unpause
-       
-    _.each(environment.objects, function (obj) {
-        if (obj.pathRun) {obj.pathRun(10000, 100, cosmic.time);}
-    });
-}
-  
-cosmic.step = function () {
-    cosmic.start();
-    cosmic.pause();
-};
+    var playback = {};
+
+    playback.progress = function (timestamp) {
+        if (!paused.progress) {
+            // Setup next progress
+            requestId = rAF(playback.progress);
+        }
+
+        if (!paused.physics) {
+            // Update physics and then store time
+            cosmic.environment.advance(timestamp - (cosmic.time || timestamp));
+            cosmic.time = timestamp;
+        }
+
+        if (!paused.render && cosmic.camera !== undefined) {
+            // Render
+            hub.trigger('playback:render:before');
+            cosmic.camera.render();
+            hub.trigger('playback:render');
+        }
+    };
+
+    playback.start = function (paused) {
+        if (!paused) { playback.unpause(); }
+        playback.progress();
+        running = true;
+
+        hub.trigger('playback:start');
+    };
+
+    playback.step = function (timestep) {
+        paused.progress = true;
+
+        if (cosmic.time === undefined) {
+            cosmic.time = +new Date;
+        }
+        
+        timestep = timestep !== undefined ? timestep : (1000 / 60)
+        playback.progress(cosmic.time + timestep);
+
+        hub.trigger('playback:step');
+    }
+
+    playback.pause = function (all) {
+        if (all) {
+            paused.progress = true;
+            paused.render = true;
+        }
+        paused.physics = true;
+
+        hub.trigger('playback:pause');
+    };
+
+    playback.unpause = function (all) {
+        if (all) {
+            paused.progress = false;
+            paused.render = false;
+        }
+        paused.physics = false;
+
+        hub.trigger('playback:unpause');
+    };
+
+    playback.stop = function () {
+        // Cancel progress callback (if defined)
+        if (requestId) {
+            global.cancelAnimationFrame(requestId);
+        }
+
+        // Reset timestamp and reset running
+        cosmic.time = undefined;
+        running = false;
+
+        hub.trigger('playback:stop');
+    };
+
+    return playback;
+
+})(this || window, cosmic.hub);
 
 
     return cosmic;
-})(this, _, Backbone);
+})(this || window, _, Backbone);

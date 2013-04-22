@@ -1,9 +1,7 @@
-//require(
-//['cosmic', 'freebody', 'cosmic/KineticCamera', 'Planet', 'Ship', 'Destination', 'cosmic/environment'],
-(function (cosmic, freebody, KineticCamera, Planet, Ship, Destination, environment) {
+(function (cosmic, freebody, Planet, Ship, Destination) {
 
-    environment.bounds.width *= 2;
-    environment.bounds.height *= 2;
+    cosmic.environment.bounds.width *= 2;
+    cosmic.environment.bounds.height *= 2;
     
     // Set up ship and planets
     var ship = [
@@ -53,25 +51,25 @@
         cosmic.environment.addPlanet(planets[i]);
     }
     for (var i = 0; i < destinations.length; i++) {
-        cosmic.environment.addDestination(destinations[i]);
+        cosmic.environment.addObject(destinations[i]);
     }
     for (var i = 0; i < ship.length; i++) {
         cosmic.environment.addBody(ship[i]);
     }
     
     // Setup camera
-    var camera = new KineticCamera('experiment');
+    var camera = new cosmic.KineticCamera('experiment');
     camera.scale = 0.5;
-    camera.viewSize = {x:1600,y:1200}
+    camera.viewSize = { x: 1600, y: 1200 }
     camera.defaults = {
-        scale:0.5,
-        position:{x:0,y:0},
-        following:null
-    }
+        scale: 0.5,
+        position: { x: 0, y: 0 },
+        following: null
+    };
     
     // Add layers
     camera.layer('background', cosmic.background.objects);
-    camera.layer('paths', cosmic.paths.objects);
+    //camera.layer('paths', cosmic.paths.objects);
     camera.layer('foreground', cosmic.environment.objects);
     camera.layer('interface', cosmic.ui.objects)
     
@@ -86,26 +84,19 @@
     window.planets = planets;
     window.destinations = destinations;
     
+    cosmic.reset = function () {
+        _.each(cosmic.environment.objects, function (object) {
+            object.x = Math.floor(Math.random()*1400 + 100);
+            object.y = Math.floor(Math.random()*1200 + 100);
+            cosmic.camera.reset();
+            cosmic.iteration += 1;
+            console.log(cosmic.iteration);
+        })
+    }
+
     // Start experiment:
     console.log('Starting Planeteer');
-    cosmic.startRendering();
-})(cosmic, freebody, cosmic.KineticCamera, Planet, Ship, Destination, cosmic.environment);
+    cosmic.playback.pause();
+    cosmic.playback.start(true);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})(cosmic, freebody, Planet, Ship, Destination);

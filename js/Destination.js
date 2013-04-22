@@ -34,20 +34,26 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                         cosmic.pausePhysics();
                         console.log(this.options.destTime, cosmic.time);
                     }
+            },
+            drag: function (e) {
+                if (e && cosmic.camera) {
+                    this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
+                    this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;    
+                }
             }
         })
         
         .display(function() {
-            var destination = this;
-            var lastMousePos = {x:0,y:0};
             var display = new Kinetic.Group();
-            
+            display.underlying = this;
+
             this.options.preScale = 
                 art.destination(display, this.options.radius, this.options.preScale, this.options.color).preScale;
             this.options.color = 
                 art.destination(display, this.options.radius, this.options.preScale, this.options.color).color;
             
             // Attach events
+            /*
             display.move = function (e) {
                 destination.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
                 destination.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
@@ -60,13 +66,14 @@ var Destination = (function (cosmic, _, Kinetic, art) {
             display.select = function (e) {
                 cosmic.selected = destination;
             }
+            */
             
             return display;
         })
             
         
         .events({
-            'howdy': 'sayHowdy'
+            'touchmove': 'drag'
         })
         .collisions('centerDistance', function (bounding) {
             bounding(this, this.options.radius);
