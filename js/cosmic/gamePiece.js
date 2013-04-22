@@ -16,6 +16,7 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
             
             // Create display
             this.display = this._create.call(this);
+            this.display.underlying = this;
 
             // Setup bounding (if specified)
             if (_.isFunction(this._setBounding)) {

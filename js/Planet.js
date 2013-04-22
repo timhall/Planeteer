@@ -23,15 +23,11 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             
             collide: function (obj) {
                 //this.display.setFill('red');
-            },
-            
-            sayHowdy: function () {
-                console.log('Howdy!');
             }
         })
         .display(function () {
             var planet = this;
-            var lastMousePos = {x:0,y:0}
+            //var lastMousePos = {x:0,y:0}
             var display = new Kinetic.Group();
             
             
@@ -45,10 +41,10 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             }
             
             // Attach events
+            /*
             var mouseIsDown = false;
             display.move = function (e) {
-                planet.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
-                planet.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
+                
             };
             
             display.followClick = function (e) {
@@ -59,11 +55,15 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             display.select = function (e) {
                 cosmic.selected = planet;
             }
+            */
             
             return display;            
         })
         .events({
-            'howdy': 'sayHowdy'
+            'touchmove': function (e) {
+                this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
+                this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
+            }
         })
         .collisions('centerDistance', function (bounding) {
             bounding(this, this.options.radius);

@@ -86,7 +86,8 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 var shape = getShape(e);
                 if (shape && shape.underlying && shape.underlying.trigger) {
                     shape.underlying.trigger('touchstart', e);
-                    cosmic.selected = selected = shape;
+                    selected = shape;
+                    cosmic.selected = selected.underlying;
                 }
                 
                 // Trigger touchstart on hub

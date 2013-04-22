@@ -92,9 +92,17 @@
             cosmic.iteration += 1;
             console.log(cosmic.iteration);
         })
-    }
+    };
+    
+    // Subscribe to events
+    cosmic.hub.on('touchstart', function (e) {
+        cosmic.playback.pause();
+    })
+    cosmic.hub.on('touchend', function (e) {
+        cosmic.playback.unpause();  
+    });
 
-    // Start experiment:
+    // Start planeteer
     console.log('Starting Planeteer');
     cosmic.playback.pause();
     cosmic.playback.start(true);

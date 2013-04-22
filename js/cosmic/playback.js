@@ -47,22 +47,44 @@ cosmic.playback = (function (global, hub) {
         hub.trigger('playback:step');
     }
 
-    playback.pause = function (all) {
-        if (all) {
-            paused.progress = true;
-            paused.render = true;
+    playback.pause = function (options) {
+        if (options) {
+            if (options.progress !== undefined) {
+                paused.progress = options.progress;
+            }
+            if (options.render !== undefined) {
+                paused.render = options.render;
+            }
+            if (options.physics !== undefined) {
+                paused.physics = options.physics;
+            } else {
+                paused.physics = true;
+            }
+        } else {
+            paused.physics = true;
         }
-        paused.physics = true;
 
         hub.trigger('playback:pause');
     };
 
-    playback.unpause = function (all) {
-        if (all) {
-            paused.progress = false;
-            paused.render = false;
+    playback.unpause = function (options) {
+        if (options) {
+            if (options.progress !== undefined) {
+                paused.progress = options.progress;
+            }
+            if (options.render !== undefined) {
+                paused.render = options.render;
+            }
+            if (options.physics !== undefined) {
+                paused.physics = options.physics;
+            } else {
+                paused.physics = false;
+            }
+        } else {
+            paused.physics = false;
         }
-        paused.physics = false;
+        
+        cosmic.time = +new Date;
 
         hub.trigger('playback:unpause');
     };

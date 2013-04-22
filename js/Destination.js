@@ -31,7 +31,7 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                     console.log('destination colliding', this._resetting);
                     if (this.options._resetting == false) {
                         //this.options._destTime = cosmic.time;
-                        cosmic.pausePhysics();
+                        cosmic.playback.pause();
                         console.log(this.options.destTime, cosmic.time);
                     }
             },
@@ -45,7 +45,6 @@ var Destination = (function (cosmic, _, Kinetic, art) {
         
         .display(function() {
             var display = new Kinetic.Group();
-            display.underlying = this;
 
             this.options.preScale = 
                 art.destination(display, this.options.radius, this.options.preScale, this.options.color).preScale;
