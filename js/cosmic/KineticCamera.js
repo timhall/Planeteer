@@ -129,25 +129,39 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 self.stage.on('mouseup' || 'touchend', touchend);
             }
             
+            var scale = function (value) {
+                var zoom = self.scale * (1 + value);
+                if (zoom > 0.15 && zoom < 2) {
+                    self.zoom(zoom);
+                    cosmic.hub.trigger('camera:zoom', zoom);
+                }
+            }
+            
             // Listen to mouse wheel event
             document.addEventListener('mousewheel', function (e) {
-                cosmic.hub.trigger('zoom', e.wheelDeltaY/1440);
+                scale(e.wheelDeltaY/1440);
             }, true);
             
             cosmic.hub.on('touchstart', function (e, selection) {
                 if (selection && e.ctrlKey && e.shiftKey) {
+                    // Follow: if something is selected and ctrl + shift
                     self.follow(selection);
                 
                     e.handled = true;
                 } else if (e.ctrlKey && !e.shiftKey) {
+                    // Center: ctrl
+                    
                     self.following = undefined;
                     var prePosX = self.position.x;
                     var prePosY = self.position.y;
                     self.position.x = ((e.layerX)/self.scale) + prePosX - (400/self.scale);
                     self.position.y = ((e.layerY)/self.scale) + prePosY - (300/self.scale);
                     
+                    cosmic.hub.trigger('camera:center', self);
                     e.handled = true;
                 } else if (e.shiftKey && !e.ctrlKey) {
+                    // Pan: shift + drag
+                    
                     shifting = {
                         x: e.layerX,
                         y: e.layerY
@@ -164,19 +178,13 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                     shifting.x = e.layerX;
                     shifting.y = e.layerY;
                     
+                    cosmic.hub.trigger('camera:pan', self);
                     e.handled = true;
                 } 
             });
             
             cosmic.hub.on('touchend', function (e, selection) {
                 shifting = undefined;
-            });
-            
-            cosmic.hub.on('zoom', function (scale) {
-                var zoom = self.scale * (1 + scale);
-                if (zoom > 0.15 && zoom < 2) {
-                    self.zoom(zoom);
-                }
             });
         }
     });

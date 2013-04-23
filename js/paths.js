@@ -34,11 +34,15 @@ cosmic.paths = (function (_, Kinetic, utils) {
         }
     };
     
-    paths.update = function () {
+    paths.place = function () {
         camera = cosmic.camera;
         group.setX((0 - camera.position.x) * camera.scale);
         group.setY((0 - camera.position.y) * camera.scale);
         group.setScale(1 * camera.scale, 1 * camera.scale);
+    };
+    
+    paths.update = function () {
+        paths.place();
         
         for (var i = 0, max = tracked.length; i < max; i += 1) {
             drawPath(tracked[i].obj, tracked[i].path);
@@ -52,8 +56,8 @@ cosmic.paths = (function (_, Kinetic, utils) {
     cosmic.hub.on('playback:start', function () {
         paths.init();
     });
-    cosmic.hub.on('zoom', function () {
-        paths.update(); 
+    cosmic.hub.on('camera:zoom camera:pan camera:follow camera:center', function () {
+        paths.place(); 
     });
     cosmic.hub.on('planet:move', function () {
         paths.update();

@@ -48,6 +48,8 @@ cosmic.CameraBase = (function (_, environment) {
         } else {
             _.each(_.keys(camera._layers), camera.renderLayer, camera);
         }
+        
+        cosmic.hub.trigger('camera:render');
     };
     
     /**
@@ -91,6 +93,8 @@ cosmic.CameraBase = (function (_, environment) {
                 this.position.x = this.following.x - 400/this.scale;
                 this.position.y = this.following.y - 300/this.scale;
                 //console.log(this.position.x + ' | ' +  this.position.y)
+                
+                cosmic.hub.trigger('camera:follow');
             }
             matter.draw(this.position, this.scale); 
         }
@@ -104,9 +108,7 @@ cosmic.CameraBase = (function (_, environment) {
      * @prototype
      */
     CameraBase.prototype.follow = function (object) {
-        console.log('called');
         this.following = object;
-        console.log(this.following);
     }
     
     CameraBase.prototype.stopFollow = function () {
