@@ -63,6 +63,7 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             'touchmove': function (e) {
                 this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
                 this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
+                cosmic.hub.trigger('planet:move', this);
             }
         })
         .collisions('centerDistance', function (bounding) {

@@ -1,93 +1,68 @@
 cosmic.paths = (function (_, Kinetic, utils) {
 
-    var paths = {};
-    paths.objects = [];
+    var paths = {},
+        tracked = [],
+        group = new Kinetic.Group({
+            x: 0,
+            y: 0,
+            opacity: 1
+        }),
+        path, camera;
+        
+    paths.objects = [
+        {
+            display: group
+        }
+    ];
     
-    var pathContainer = new Kinetic.Group({
-        x: 0,
-        y: 0,
-        opacity: 1,
-        init: false
+    paths.track = function (obj) {
+        if (obj && typeof obj.path === 'function') {
+            var path = new Kinetic.Spline({
+                stroke: '#00BFFF',
+                strokeWidth: 3,
+                opacity: 1,
+                tension: 1
+            })
+            
+            drawPath(obj, path);
+            
+            tracked.push({
+                obj: obj,
+                path: path
+            });
+            group.add(path);
+        }
+    };
+    
+    paths.update = function () {
+        camera = cosmic.camera;
+        group.setX((0 - camera.position.x) * camera.scale);
+        group.setY((0 - camera.position.y) * camera.scale);
+        group.setScale(1 * camera.scale, 1 * camera.scale);
+        
+        for (var i = 0, max = tracked.length; i < max; i += 1) {
+            drawPath(tracked[i].obj, tracked[i].path);
+        }  
+    };
+    
+    paths.init = function () {
+        paths.update();
+    };
+    
+    cosmic.hub.on('playback:start', function () {
+        paths.init();
+    });
+    cosmic.hub.on('zoom', function () {
+        paths.update(); 
+    });
+    cosmic.hub.on('planet:move', function () {
+        paths.update();
     })
     
-    var pathList = [];
-    
-    var pathUpdate = function () {
-        pathContainer.setX((0 - cosmic.camera.position.x)*cosmic.camera.scale);
-        pathContainer.setY((0 - cosmic.camera.position.y)*cosmic.camera.scale);
-        pathContainer.setScale(1 * cosmic.camera.scale, 1 * cosmic.camera.scale);
-        
-        if (pathContainer.attrs.init == false) {
-            _.each(cosmic.environment.objects, function (obj) {
-                if (obj.pathRun) {
-                    pathList.push({path: obj.options.path, time: obj.options.pathTime, interval: obj.options.pathShow});
-                }
-            })
-            console.log(pathList);
-            
-            _.each(pathList, function (obj) {
-                console.log(obj);
-                pathContainer.add(new Kinetic.Spline({
-                    points: obj.path,
-                    stroke: '#00BFFF',
-                    strokeWidth: 3,
-                    opacity: 1,
-                    tension: 1
-                }));
-            })
-            pathContainer.attrs.init = true;
-        }
-        //console.log(_.find(cosmic.environment.objects, function (obj) {return obj.options.type == 'Ship'}).options.path[0], pathList[0].path[0]);
-        
-        
-        
-        if (_.find(cosmic.environment.objects, function (obj) {return obj.options.type == 'Ship'}).options.path != pathList[0]) {
-            pathList.length = 0;
-            pathContainer.children.length = 0;
-            
-            _.each(cosmic.environment.objects, function (obj) {
-                if (obj.pathRun) {
-                    pathList.push({path: obj.options.path, time: obj.options.pathTime, interval: obj.options.pathShow});
-                }
-            })
-            
-            _.each(pathList, function (obj) {
-                pathContainer.add(new Kinetic.Spline({
-                    points: obj.path,
-                    stroke: '#00BFFF',
-                    strokeWidth: 3,
-                    opacity: 1,
-                    tension: 1
-                }));
-            })
-        }
-        
-        _.each(pathContainer.children, function(obj) {
-            var points = obj.getPoints()
-            
-            obj.attrs.points.length = pathList[obj.index].interval/100;
-            
-            if (points[0]) {
-                var t = points[0].t;    
-            }
-            
-            //console.log(t);
-            /*while (t <= cosmic.time) {
-                obj.setPoints(
-                    function () {
-                        obj.attrs.points.splice(0,1);
-                        //obj.attrs.points.push(_.find(pathList[obj.index].path, function (obj2) {return obj2 == obj.getPoints()[48]}.index + 1))
-                    }
-                )
-            }*/
-        })
-        
-        
+    var drawPath = function (obj, path) {
+        path.setPoints(obj.path());
     }
     
-    paths.objects.push({ display: pathContainer, draw: pathUpdate});
-    
-    
-    
     return paths;
+    
 })(_, Kinetic, freebody.utils);

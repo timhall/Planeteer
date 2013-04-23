@@ -673,6 +673,7 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
             
             // Create display
             this.display = this._create.call(this);
+            this.display.underlying = this;
 
             // Setup bounding (if specified)
             if (_.isFunction(this._setBounding)) {
@@ -825,7 +826,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
         });
         
         this._displayLayers = {};
-        setupTracking.call(this);
+        this._setupTracking();
     };
     
     _.extend(KineticCamera.prototype, CameraBase.prototype, {
@@ -871,69 +872,126 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 displayLayer.add(obj.display)
                 obj.display.layer = displayLayer.name;
             }  
+        },
+        
+        _setupTracking: function () {
+            var self = this,
+                tracking, selected, shifting;
+    
+            if (self.stage) {
+                // Setup full size rectangle to track clicks
+                /*
+                var tracking = new Kinetic.Rect({
+                    width: this.stage.attrs.width,
+                    height: this.stage.attrs.height,
+                    opacity: 0
+                });
+                tracking.isTrackingLayer = true;
+    
+                // Add tracking layer
+                this.layer('tracking', [
+                    { display: tracking }
+                ]);
+                */
+    
+                // "Touch start" event handler
+                var touchstart = function (e) {
+                    // Get shape from event
+                    var shape = getShape(e),
+                        selection = shape.underlying;
+                    
+                    // Trigger touchstart on hub
+                    cosmic.hub.trigger('touchstart', e, selection);
+                    
+                    // Trigger event on shape unless handled
+                    if (!e.handled && selection) {
+                        selection.trigger('touchstart', e);
+                        cosmic.selected = selected = selection;
+                    }
+                    
+                    tracking = true;
+                };
+    
+                // "Touch move" event handler
+                var touchmove = function (e) {
+                    if (tracking) {
+                        cosmic.hub.trigger('touchmove', e, selected);
+                        
+                        if (!e.handled && selected) {
+                            selected.trigger('touchmove', e);
+                        }   
+                    }
+                };
+    
+                // "Touch end" event handler
+                var touchend = function (e) {
+                    cosmic.hub.trigger('touchend', e, selected);
+                    
+                    if (!e.handled && selected) {
+                        selected.trigger('touchend', e);
+                    }
+                    
+                    cosmic.selected = selected = undefined;
+                    tracking = false;
+                }
+    
+                // Setup event listeners on stage
+                self.stage.on('mousedown' || 'touchstart', touchstart);
+                self.stage.on('mousemove' || 'touchmove', touchmove);
+                self.stage.on('mouseup' || 'touchend', touchend);
+            }
+            
+            // Listen to mouse wheel event
+            document.addEventListener('mousewheel', function (e) {
+                cosmic.hub.trigger('zoom', e.wheelDeltaY/1440);
+            }, true);
+            
+            cosmic.hub.on('touchstart', function (e, selection) {
+                if (selection && e.ctrlKey && e.shiftKey) {
+                    self.follow(selection);
+                
+                    e.handled = true;
+                } else if (e.ctrlKey && !e.shiftKey) {
+                    self.following = undefined;
+                    var prePosX = self.position.x;
+                    var prePosY = self.position.y;
+                    self.position.x = ((e.layerX)/self.scale) + prePosX - (400/self.scale);
+                    self.position.y = ((e.layerY)/self.scale) + prePosY - (300/self.scale);
+                    
+                    e.handled = true;
+                } else if (e.shiftKey && !e.ctrlKey) {
+                    shifting = {
+                        x: e.layerX,
+                        y: e.layerY
+                    };
+                    
+                    e.handled = true;
+                }
+            });
+            
+            cosmic.hub.on('touchmove', function (e, selection) {
+                if (shifting !== undefined && e.shiftKey && self) {
+                    self.position.x += (shifting.x - e.layerX)/self.scale;
+                    self.position.y += (shifting.y - e.layerY)/self.scale;
+                    shifting.x = e.layerX;
+                    shifting.y = e.layerY;
+                    
+                    e.handled = true;
+                } 
+            });
+            
+            cosmic.hub.on('touchend', function (e, selection) {
+                shifting = undefined;
+            });
+            
+            cosmic.hub.on('zoom', function (scale) {
+                var zoom = self.scale * (1 + scale);
+                if (zoom > 0.15 && zoom < 2) {
+                    self.zoom(zoom);
+                }
+            });
         }
     });
-
-    var setupTracking = function () {
-        var following, selected;
-
-        if (this.stage) {
-            // Setup full size rectangle to track clicks
-            var tracking = new Kinetic.Rect({
-                width: this.stage.attrs.width,
-                height: this.stage.attrs.height,
-                opacity: 0
-            });
-            tracking.isTrackingLayer = true;
-
-            // Add tracking layer
-            this.layer('tracking', [
-                { display: tracking }
-            ]);
-
-            // "Touch start" event handler
-            var touchstart = function (e) {
-                // Trigger touchstart on shape
-                var shape = getShape(e);
-                if (shape && shape.underlying && shape.underlying.trigger) {
-                    shape.underlying.trigger('touchstart', e);
-                    selected = shape;
-                    cosmic.selected = selected.underlying;
-                }
-                
-                // Trigger touchstart on hub
-                cosmic.hub.trigger('touchstart', e, selected);
-                following = true;
-            };
-
-            // "Touch move" event handler
-            var touchmove = function (e) {
-                if (following) {
-                    if (selected && selected.underlying && selected.underlying.trigger) {
-                        selected.underlying.trigger('touchmove', e);
-                    }
-
-                    cosmic.hub.trigger('touchmove', e, selected);   
-                }
-            };
-
-            // "Touch end" event handler
-            var touchend = function (e) {
-                if (selected && selected.underlying && selected.underlying.trigger) {
-                    selected.underlying.trigger('touchend', e);
-                }
-
-                cosmic.hub.trigger('touchend', e);
-                cosmic.selected = selected = undefined;
-                following = false;
-            }
-
-            // Setup event listeners
-            this.stage.on('mousedown' || 'touchstart', touchstart);
-            this.stage.on('mousemove' || 'touchmove', touchmove);
-            this.stage.on('mouseup' || 'touchend', touchend);
-        }
-    };
 
     var getShape = function (event) {
         // Pull targetNode (set up by Kinetic)
@@ -967,8 +1025,10 @@ cosmic.playback = (function (global, hub) {
 
         if (!paused.physics) {
             // Update physics and then store time
+            hub.trigger('playback:advance:before');
             cosmic.environment.advance(timestamp - (cosmic.time || timestamp));
             cosmic.time = timestamp;
+            hub.trigger('playback:advance');
         }
 
         if (!paused.render && cosmic.camera !== undefined) {
@@ -1000,22 +1060,44 @@ cosmic.playback = (function (global, hub) {
         hub.trigger('playback:step');
     }
 
-    playback.pause = function (all) {
-        if (all) {
-            paused.progress = true;
-            paused.render = true;
+    playback.pause = function (options) {
+        if (options) {
+            if (options.progress !== undefined) {
+                paused.progress = options.progress;
+            }
+            if (options.render !== undefined) {
+                paused.render = options.render;
+            }
+            if (options.physics !== undefined) {
+                paused.physics = options.physics;
+            } else {
+                paused.physics = true;
+            }
+        } else {
+            paused.physics = true;
         }
-        paused.physics = true;
 
         hub.trigger('playback:pause');
     };
 
-    playback.unpause = function (all) {
-        if (all) {
-            paused.progress = false;
-            paused.render = false;
+    playback.unpause = function (options) {
+        if (options) {
+            if (options.progress !== undefined) {
+                paused.progress = options.progress;
+            }
+            if (options.render !== undefined) {
+                paused.render = options.render;
+            }
+            if (options.physics !== undefined) {
+                paused.physics = options.physics;
+            } else {
+                paused.physics = false;
+            }
+        } else {
+            paused.physics = false;
         }
-        paused.physics = false;
+        
+        cosmic.time = +new Date;
 
         hub.trigger('playback:unpause');
     };

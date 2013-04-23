@@ -71,9 +71,6 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 }
             },
             
-            sayHowdy: function () {
-                console.log('Howdy!');
-            },
             thrust: function (body) {
                 if (body.forces.length > 2) {
                     body.forces.pop();
@@ -93,6 +90,7 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 body.options.jet = null;
             },
             
+            /*
             pathRun: function (ms, timestep, timestamp) {
                 //console.log(this.netForce(), this.v);
                 this.options.path = this.path(ms, timestep, timestamp);
@@ -101,7 +99,7 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 //console.log(this.options.path, this.options.pathTime);
                 //_.each(_pathClone)
             }
-            
+            */
         })
         .display(function () {
             var ship = this;

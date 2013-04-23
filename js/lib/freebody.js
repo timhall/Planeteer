@@ -453,19 +453,16 @@ freebody.Body = (function (Vector, utils) {
      * @param {Number} timestep
      * @returns {Array} path points ({ x, y })
      */
-    Body.prototype.path = function (ms, timestep, timestamp) {
+    Body.prototype.path = function (ms, timestep) {
         // Maybe just create a clone of 'this'
         // and advance...
         
         var clone = this.clone(),
             elapsed = 0,
             path = [],
-            stopAdvance,
-            _time,
-            passes = 0;
+            stopAdvance;
             
         timestep = timestep || Body.options.timestep;
-        _time = timestamp || 0;
         
         if (timestep > 0) {
             // Create stop advance callback
@@ -477,8 +474,11 @@ freebody.Body = (function (Vector, utils) {
                 
                 // Move object and store position
                 clone.move(timestep);
-                path.push({x:clone.x, y:clone.y, t:(_time + _time*passes)});
-                passes++;
+                path.push({
+                    x: clone.x, 
+                    y: clone.y,
+                    t: elapsed
+                });
             }
         }
         window.body = clone;

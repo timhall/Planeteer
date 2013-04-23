@@ -15,6 +15,7 @@ var Destination = (function (cosmic, _, Kinetic, art) {
         .methods({
             draw: function (offset, zoom) {
                 this.display.children[0].setFill(this.options.color);
+                //console.log(this.display.children[1].getRotation());
                 this.display.children[1].setRotation(this.display.children[1].attrs.rotation + 0.015);
                 this.display.setX((this.x - offset.x)*zoom);
                 this.display.setY((this.y - offset.y)*zoom);

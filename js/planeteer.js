@@ -4,7 +4,7 @@
     cosmic.environment.bounds.height *= 2;
     
     // Set up ship and planets
-    var ship = [
+    var ships = [
         new Ship({
             color: 'yellow',
             radius: 20,
@@ -53,8 +53,11 @@
     for (var i = 0; i < destinations.length; i++) {
         cosmic.environment.addObject(destinations[i]);
     }
-    for (var i = 0; i < ship.length; i++) {
-        cosmic.environment.addBody(ship[i]);
+    for (var i = 0; i < ships.length; i++) {
+        cosmic.environment.addBody(ships[i]);
+        
+        // Setup paths
+        cosmic.paths.track(ships[i]);
     }
     
     // Setup camera
@@ -80,7 +83,7 @@
     window.cosmic = cosmic;
     window.camera = cosmic.camera;
     window.environment = cosmic.environment;
-    window.ship = ship;
+    window.ships = ships;
     window.planets = planets;
     window.destinations = destinations;
     
@@ -101,10 +104,22 @@
     cosmic.hub.on('touchend', function (e) {
         cosmic.playback.unpause();  
     });
+    
+    
+    /*
+    var wait = 0;
+    cosmic.hub.on('playback:advance', function () {
+        if (wait++ > 10) {
+            cosmic.paths.update();
+            wait = 0;
+        }
+    })
+    */
 
     // Start planeteer
     console.log('Starting Planeteer');
     cosmic.playback.pause();
+    //cosmic.playback.step();
     cosmic.playback.start(true);
 
 })(cosmic, freebody, Planet, Ship, Destination);

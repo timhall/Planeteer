@@ -14,8 +14,10 @@ cosmic.playback = (function (global, hub) {
 
         if (!paused.physics) {
             // Update physics and then store time
+            hub.trigger('playback:advance:before');
             cosmic.environment.advance(timestamp - (cosmic.time || timestamp));
             cosmic.time = timestamp;
+            hub.trigger('playback:advance');
         }
 
         if (!paused.render && cosmic.camera !== undefined) {
