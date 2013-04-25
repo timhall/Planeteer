@@ -26,7 +26,7 @@ cosmic.CameraBase = (function (_, environment) {
         
         this.position = { x: 0, y: 0 };
         this.scale = 1;
-        this.initSize = {x: 800, y: 600};
+        this.initSize = {x: 1000, y: 750};
         this.viewSize = {x: this.initSize.x / this.scale, y: this.initSize.y / this.scale};
         
         // Internal properties

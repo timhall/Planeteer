@@ -103,6 +103,12 @@ cosmic.playback = (function (global, hub) {
 
         hub.trigger('playback:stop');
     };
+    
+    playback.isPaused = function () {
+        return !!_.some(_.values(paused), function (value) {
+            return value;
+        });
+    };
 
     return playback;
 

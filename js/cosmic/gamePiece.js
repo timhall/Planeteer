@@ -1,10 +1,10 @@
-cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
+cosmic.gamePiece = (function (cosmic, Matter, _, Kinetic) {
 
     /**
      * Wrapper for "game piece" functionality
      */
     var gamePiece = function () {
-        var piece = this;
+        var piece = {};
         
         // Generic GamePiece object that's being created
         var GamePiece = function (options) {
@@ -114,7 +114,7 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
          */
         piece.collisions = function (strategy, bounding) {
             // Find collision approach for strategy
-            var collision = collisions[strategy];
+            var collision = cosmic.collisions[strategy];
             if (collision) {
                 _.extend(GamePiece.prototype, 
                     collision.methods, {
@@ -151,4 +151,4 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
     // Finally, return
     return gamePiece;
 
-})(cosmic.Matter, cosmic.collisions, _, Kinetic);
+})(cosmic, cosmic.Matter, _, Kinetic);

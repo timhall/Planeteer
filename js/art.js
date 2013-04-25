@@ -72,7 +72,7 @@ var art = (function (Kinetic) {
         group.add(new Kinetic.Spline({
             points: [{x:0,y:0}, {x:10,y:10}],
             stroke: '#00BFFF',
-            strokeWidth: 3,
+            strokeWidth: 2,
             opacity: 0,
             tension: 1,
             rotationDeg:270

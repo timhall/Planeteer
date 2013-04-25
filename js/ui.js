@@ -51,7 +51,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
                 'Velocity: ' + utils.roundToPrecision(cosmic.environment.objects[3].v.magnitude(), 2) + '\n' + 
                 'Angle: ' + utils.roundToPrecision(cosmic.environment.objects[3].v.angle()) + '\n' +
                 'Thrust: ' + shipJet + '\n' +
-                'Selected: ' + selected.options.name// + '\n' +
+                'Misc: ' + cosmic.camera.position.x + ', ' + cosmic.camera.position.y + ', ' + cosmic.camera.scale// + '\n' +
                 //'Time: ' + (Math.round( cosmic.time/100 ) / 10).toFixed(1)
         );
         
@@ -70,15 +70,15 @@ cosmic.ui = (function (_, Kinetic, utils) {
     });
     
     minimap.add(new Kinetic.Rect({
-        width: 160,
-        height: 120,
+        width: 240,
+        height: 180,
         fill: 'black',
         opacity: 0.7
     }));
     
     minimap.add(new Kinetic.Rect({
-        width: 164,
-        height: 124,
+        width: 244,
+        height: 184,
         stroke: '#00BFFF',
         strokeWidth: 2,
         x: -2,
@@ -88,8 +88,8 @@ cosmic.ui = (function (_, Kinetic, utils) {
     //console.log(cosmic.environment);
     
     var mapUpdate = function () {
-        minimap.setX(cosmic.camera.stage.attrs.width - 165);
-        minimap.setY(cosmic.camera.stage.attrs.height - 125);
+        minimap.setX(cosmic.camera.stage.attrs.width - 245);
+        minimap.setY(cosmic.camera.stage.attrs.height - 185);
         
         if (minimap.children.length < 3) {
             for (var i = 0; i < cosmic.environment.objects.length; i++) {
@@ -181,7 +181,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
         selection.children[0].setText(selected.options.name);
     }
     
-    ui.objects.push({ display: selection,  draw: selectUpdate});
+    //ui.objects.push({ display: selection,  draw: selectUpdate});
     
     return ui;
 })(_, Kinetic, freebody.utils);

@@ -44,8 +44,9 @@ cosmic.Matter = (function (freebody, _, Backbone) {
                 
                 // Check collision (if defined)
                 if (_.isFunction(matter.checkCollision) && matter.checkCollision(obj)) {
-                    matter.collide(obj);
-                    obj.collide(matter);
+                    matter.trigger('collision', obj);
+                    obj.trigger('collision', matter);
+                    cosmic.hub.trigger('collision', matter, obj);
                     
                     return true;
                 }

@@ -40,6 +40,7 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                 if (e && cosmic.camera) {
                     this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
                     this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;    
+                    cosmic.hub.trigger('destination:move', this);
                 }
             }
         })

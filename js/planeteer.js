@@ -1,16 +1,16 @@
 (function (cosmic, freebody, Planet, Ship, Destination) {
 
-    cosmic.environment.bounds.width *= 2;
-    cosmic.environment.bounds.height *= 2;
+    cosmic.environment.bounds.width *= 3;
+    cosmic.environment.bounds.height *= 3;
     
     // Set up ship and planets
     var ships = [
         new Ship({
             color: 'yellow',
-            radius: 20,
+            radius: 25,
             mass: 1000,
-            x: 50,
-            y: 50,
+            x: 150,
+            y: 150,
             name: 'Fighter'
         })
     ];
@@ -19,18 +19,18 @@
         new Planet({
             color: '#6BCAF3',
             radius: 70,
-            mass: 10000000000000000,
-            x: 250,
-            y: 700,
+            mass: 10000000000000000 * 8,
+            x: 500,
+            y: 1100,
             image: 'blue',
             name: 'Neptune'
         }),
         new Planet({
             color: '#F16122',
             radius: 100,
-            mass: 20000000000000000,
-            x: 950,
-            y: 500,
+            mass: 20000000000000000 * 8,
+            x: 1400,
+            y: 530,
             image: 'orange',
             name: 'Jupiter'
         })
@@ -40,8 +40,8 @@
         new Destination({
             color: null,
             radius: 70,
-            x: 850,
-            y: 800,
+            x: 1650,
+            y: 1500,
             name: 'Destination'
         })    
     ]
@@ -62,8 +62,8 @@
     
     // Setup camera
     var camera = new cosmic.KineticCamera('experiment');
-    camera.scale = 0.5;
-    camera.viewSize = { x: 1600, y: 1200 }
+    camera.scale = 5/12;
+    camera.viewSize = { x: 2400, y: 1800 }
     camera.defaults = {
         scale: 0.5,
         position: { x: 0, y: 0 },
@@ -100,11 +100,57 @@
     // Subscribe to events
     cosmic.hub.on('touchstart', function (e) {
         cosmic.playback.pause();
+        
     })
     cosmic.hub.on('touchend', function (e) {
-        cosmic.playback.unpause();  
+        //cosmic.playback.unpause();  
+    });
+    cosmic.hub.on('collision', function (A, B) {
+        if (A.options.type === 'Destination' || B.options.type === 'Destination') {
+            cosmic.playback.pause();
+        } else {
+            cosmic.paths.update();
+        } 
     });
     
+    var meter = new FPSMeter(undefined, {
+        maxFps: 30,
+        theme: 'colorful',
+        top: 'auto', right: '5px', bottom: '5px', left: 'auto',
+        heat: true,
+        graph: true, history: 20
+    });
+    cosmic.hub.on('playback:render', meter.tick);
+    
+    var playButton = document.querySelectorAll('.play-button')[0];
+    playButton.addEventListener('click', function (e) {
+        togglePause();        
+        e.preventDefault();
+    });
+    
+    var restartButton = document.querySelectorAll('.restart-button')[0];
+    restartButton.addEventListener('click', function (e) {
+        console.log('Restart');
+    });
+    
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode === 32) {
+            // Pause / unpause on spacebar
+            togglePause();
+            e.preventDefault();
+        }
+    });
+    
+    var togglePause = function () {
+        cosmic.playback.isPaused()
+            ? cosmic.playback.unpause()
+            : cosmic.playback.pause();
+    };
+    
+    cosmic.hub.on('path:intersect:destination', function (point) {
+        console.log('You win!');
+        //cosmic.playback.unpause();
+    })
     
     /*
     var wait = 0;

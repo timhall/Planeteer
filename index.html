@@ -22,14 +22,17 @@
         #experiment {
             background: #fff;
             margin: 30px 30px;
-            width: 800px;
-            height: 600px;
+            width: 1000px;
+            height: 750px;
         }
-        #notes {
+        .details {
             position:absolute;
             top:30px;
-            left:860px;
+            left:1060px;
             width:360px;
+        }
+        .strike {
+            text-decoration: line-through;
         }
     </style>
 </head>
@@ -37,11 +40,19 @@
 
     <div id="experiment"></div>
     
-    <div id="notes">
-        <li>Intersect detection for path to destination or planets.</li>
-        <li>Start/pause button with pause gate thing in cosmic.</li>
-        <li>Camera functions on the path are broken.</li>
+    <div class="details"
+        <ul>
+            <li>Intersect detection for path to destination or planets.</li>
+            <li>Note: Check out paths:52 and see if I'm on the right track.</li>
+            <li class="strike">Start/pause button with pause gate thing in cosmic.</li>
+            <li class="strike">Camera functions on the path are broken.</li>
+            <li>Predictions still slightly wrong.</li>
+            <li class="strike">Mouse gets stuck down.</li>
+            <li class="strike">Fix the minimap scale.</li>
+        </ul>
         
+        <a href="#" class="play-button">Play / Pause</a>
+        <a href="#" class="restart-button">Restart</a>
     </div>
     
     <!-- JS Libraries -->
@@ -49,6 +60,7 @@
     <script src="js/lib/underscore-min.js"></script>
     <script src="js/lib/backbone-min.js"></script>
     <script src="js/lib/kinetic-v4.4.3.min.js"></script>
+    <script src="js/lib/fpsmeter.min.js"></script>
     
     <!-- Freebody -->
     <script src="js/lib/freebody.js"></script>

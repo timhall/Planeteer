@@ -19,12 +19,12 @@ cosmic.paths = (function (_, Kinetic, utils) {
         if (obj && typeof obj.path === 'function') {
             var path = new Kinetic.Spline({
                 stroke: '#00BFFF',
-                strokeWidth: 3,
-                opacity: 1,
-                tension: 1
+                strokeWidth: 4,
+                opacity: 0.7,
+                tension: 0
             })
             
-            drawPath(obj, path);
+            drawPath(obj.path(), path);
             
             tracked.push({
                 obj: obj,
@@ -42,11 +42,58 @@ cosmic.paths = (function (_, Kinetic, utils) {
     };
     
     paths.update = function () {
+        var buffer = 0,
+            points, collided;
+        
         paths.place();
         
         for (var i = 0, max = tracked.length; i < max; i += 1) {
-            drawPath(tracked[i].obj, tracked[i].path);
-        }  
+            if (tracked[i].path.getStroke() != '#00BFFF') {
+                tracked[i].path.setStroke('#00BFFF');
+            }
+        }
+        
+        //For each object that is being tracked,
+        _.each(tracked, function (trackedObj) {    
+            
+            points = trackedObj.obj.path();
+            trackedObj.points = points;
+            
+            //find the first point in its prediction
+            _.find(points, function (point, index) {
+                
+                // that collides with an object in the environment, 
+                // with a buffer of 20 (the radius of the ship)
+                // while only looking for planets or destination
+                collided = _.find(cosmic.environment.objects, function (envObj) {
+                    if (envObj.options.type != 'Ship') {
+                        return Math.abs(freebody.utils.distance(envObj, point)) < (envObj.options.radius + buffer);
+                    } else {
+                        return false;
+                    }
+                });
+                                
+                if (collided && collided.options.type == 'Ship') {
+                    // Continue find
+                    return false;
+                } else if (collided && collided.options.type == 'Planet') {
+                    console.log(point);
+                    trackedObj.points = points.slice(0, index + 1);
+                    trackedObj.path.setStroke('red');
+                    return true;
+               } else if (collided && collided.options.type == 'Destination') {
+                    console.log(point);
+                    trackedObj.points = points.slice(0, index + 1);
+                    trackedObj.path.setStroke('green');
+                    cosmic.hub.trigger('path:intersect:destination', point);
+                    return true;
+               };
+            })
+        })
+        
+        for (var i = 0, max = tracked.length; i < max; i += 1) {
+            drawPath(tracked[i].points, tracked[i].path);
+        }
     };
     
     paths.init = function () {
@@ -61,10 +108,18 @@ cosmic.paths = (function (_, Kinetic, utils) {
     });
     cosmic.hub.on('planet:move', function () {
         paths.update();
+    });
+    cosmic.hub.on('destination:move', function () {
+        paths.update();
+    });
+    cosmic.hub.on('collision', function () {
+        //
     })
     
-    var drawPath = function (obj, path) {
-        path.setPoints(obj.path());
+    var drawPath = function (points, spline) {
+        if (points) {
+            spline.setPoints(points);
+        }
     }
     
     return paths;

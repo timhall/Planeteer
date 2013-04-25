@@ -1,7 +1,5 @@
-//define(
-//['cosmic', 'underscore', 'kinetic', 'art', 'freebody/Vector', 'freebody/utils', 'cosmic/CameraBase'],
 var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
-
+    
     var Ship = cosmic.gamePiece()
         .defaults({
             color: 'blue',
@@ -16,10 +14,7 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
             jetting: 0,
             angle: null,
             spinCount: 0,
-            type: 'Ship',
-            path: [],
-            pathTime: null,
-            pathShow: 3000
+            type: 'Ship'
         })
         .methods({
             draw: function (offset, zoom) {
@@ -34,19 +29,8 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 this.postScale = this.options.preScale * zoom, this.options.preScale * zoom;
                 
                 
-                if (this.options.spin == true) {
-                    //console.log(Math.abs(this.display.getRotationDeg() - this.v.angle()));
-                    if (Math.abs((this.options.angle - 90) - this.v.angle()) <= 10) {
-                        this.options.spinCount += 1;
-                        if (this.options.spinCount == 10) {
-                            this.options.spin = false;
-                            this.options.spinCount = 0;
-                        } else {
-                        this.display.setRotationDeg(this.v.angle() + 90 + 2*Math.sqrt(Math.abs(this.v.magnitude())));
-                        }
-                    } else {
-                        this.display.setRotation(this.v.angle() + 90 + 2*Math.sqrt(Math.abs(this.v.magnitude())));
-                    }
+                if (this.options.spin) {
+                    this.spin();
                 } else {
                     this.display.setRotationDeg(this.v.angle() + 90);
                     if (this.options.spinCount != 0) {this.options.spinCount = 0;}
@@ -65,8 +49,24 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 
             },
             
+            spin: function () {
+                //console.log(Math.abs(this.display.getRotationDeg() - this.v.angle()));
+                if (Math.abs((this.options.angle - 90) - this.v.angle()) <= 10) {
+                    this.options.spinCount += 1;
+                    if (this.options.spinCount >= 10) {
+                        this.options.spin = false;
+                        this.options.spinCount = 0;
+                    } else {
+                    this.display.setRotationDeg(this.v.angle() + 90 + 2*Math.sqrt(Math.abs(this.v.magnitude())));
+                    }
+                } else {
+                    this.display.setRotation(this.v.angle() + 90 + 2*Math.sqrt(Math.abs(this.v.magnitude())));
+                }
+            },
+            
             collide: function (obj) {
                 if (obj.options.type != 'Destination') {
+                    cosmic.collisions.utils.bounce(this, obj);
                     this.options.spin = !this.options.spin;
                 }
             },
@@ -88,18 +88,7 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
                 body.forces.push(t);
                 body.options.jetting = body.options.jet;
                 body.options.jet = null;
-            },
-            
-            /*
-            pathRun: function (ms, timestep, timestamp) {
-                //console.log(this.netForce(), this.v);
-                this.options.path = this.path(ms, timestep, timestamp);
-                this.options.pathTime = cosmic.time;
-                //console.log(this.netForce(), this.v, this.options.path[99]);
-                //console.log(this.options.path, this.options.pathTime);
-                //_.each(_pathClone)
             }
-            */
         })
         .display(function () {
             var ship = this;
@@ -120,7 +109,7 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
             
         })
         .events({
-            'howdy': 'sayHowdy'
+            'collision': 'collide'
         })
         .collisions('centerDistance', function (bounding) {
             bounding(this, this.options.radius);
