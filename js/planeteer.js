@@ -59,7 +59,7 @@
     var destinations = [
         new Destination({
             color: null,
-            radius: 70,
+            radius: 100,
             //x: 2000,
             //y: 2800,
             name: 'Destination'

@@ -908,8 +908,11 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
             }
             
             document.addEventListener('mouseup', handlers.touchend);
-            document.addEventListener('mousewheel', function (e) {
+            
+            var gameNode = document.getElementById('game');
+            gameNode.addEventListener('mousewheel', function (e) {
                 handlers.scale(e.wheelDeltaY/1440);
+                e.preventDefault();
             });
             
             cosmic.hub.on('touchstart', function (e, selection) {
