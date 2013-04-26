@@ -10,7 +10,9 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             radius: 25,
             preScale: 1,
             image: 'orange',
-            type: 'Planet'
+            type: 'Planet',
+            movable: true,
+            initOptions: null
         })
         .methods({
             draw: function (offset, zoom) {
@@ -23,6 +25,7 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             
             collide: function (obj) {
                 //this.display.setFill('red');
+                cosmic.hub.trigger('planet:collide', this);
             }
         })
         .display(function () {
@@ -32,12 +35,15 @@ var Planet = (function (cosmic, _, Kinetic, art) {
             
             
             // Create display
-            if (this.options.image == 'orange') {
+            if (this.options.image && this.options.image == 'orange') {
                 this.options.preScale =
                     art.orange(display, this.options.radius, this.options.preScale).preScale;
-            } else if (this.options.image == 'blue') {
+            } else if (this.options.image && this.options.image == 'blue') {
                 this.options.preScale =
                     art.blue(display, this.options.radius, this.options.preScale).preScale;
+            } else if (this.options.image && this.options.image == 'star') {
+                this.options.preScale = 
+                    art.star(display, this.options.radius, this.options.preScale).preScale;
             }
             
             // Attach events
@@ -61,9 +67,11 @@ var Planet = (function (cosmic, _, Kinetic, art) {
         })
         .events({
             'touchmove': function (e) {
-                this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
-                this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
-                cosmic.hub.trigger('planet:move', this);
+                if (this.options.movable) {
+                    this.x = (e.layerX)/cosmic.camera.scale + cosmic.camera.position.x;
+                    this.y = (e.layerY)/cosmic.camera.scale + cosmic.camera.position.y;
+                    cosmic.hub.trigger('planet:move', this);
+                }
             }
         })
         .collisions('centerDistance', function (bounding) {

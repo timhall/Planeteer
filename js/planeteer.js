@@ -1,7 +1,7 @@
 (function (cosmic, freebody, Planet, Ship, Destination) {
 
-    cosmic.environment.bounds.width *= 3;
-    cosmic.environment.bounds.height *= 3;
+    cosmic.environment.bounds.width *= 6;
+    cosmic.environment.bounds.height *= 6;
     
     // Set up ship and planets
     var ships = [
@@ -20,8 +20,8 @@
             color: '#6BCAF3',
             radius: 70,
             mass: 10000000000000000 * 8,
-            x: 500,
-            y: 1100,
+            x: 1000,
+            y: 2100,
             image: 'blue',
             name: 'Neptune'
         }),
@@ -29,10 +29,20 @@
             color: '#F16122',
             radius: 100,
             mass: 20000000000000000 * 8,
-            x: 1400,
-            y: 530,
+            x: 3100,
+            y: 830,
             image: 'orange',
             name: 'Jupiter'
+        }),
+        new Planet({
+            color: 'yellow',
+            radius: 250,
+            mass: 40000000000000000 * 8,
+            x: 2400,
+            y: 1800,
+            image: 'star',
+            name: 'Sun',
+            movable: false
         })
     ];
     
@@ -40,8 +50,8 @@
         new Destination({
             color: null,
             radius: 70,
-            x: 1650,
-            y: 1500,
+            x: 2000,
+            y: 2800,
             name: 'Destination'
         })    
     ]
@@ -60,10 +70,11 @@
         cosmic.paths.track(ships[i]);
     }
     
+    
     // Setup camera
     var camera = new cosmic.KineticCamera('experiment');
-    camera.scale = 5/12;
-    camera.viewSize = { x: 2400, y: 1800 }
+    camera.scale = 5/24;
+    camera.viewSize = { x: 4800, y: 3600 }
     camera.defaults = {
         scale: 0.5,
         position: { x: 0, y: 0 },
@@ -98,9 +109,9 @@
     };
     
     // Subscribe to events
-    cosmic.hub.on('touchstart', function (e) {
+    cosmic.hub.on('touchstart', function (e, selection) {
+        if (selection && selection.type === 'PlayPauseButton') return;
         cosmic.playback.pause();
-        
     })
     cosmic.hub.on('touchend', function (e) {
         //cosmic.playback.unpause();  
@@ -113,6 +124,7 @@
         } 
     });
     
+    /*
     var meter = new FPSMeter(undefined, {
         maxFps: 30,
         theme: 'colorful',
@@ -121,35 +133,40 @@
         graph: true, history: 20
     });
     cosmic.hub.on('playback:render', meter.tick);
-    
-    var playButton = document.querySelectorAll('.play-button')[0];
-    playButton.addEventListener('click', function (e) {
-        togglePause();        
-        e.preventDefault();
-    });
-    
-    var restartButton = document.querySelectorAll('.restart-button')[0];
-    restartButton.addEventListener('click', function (e) {
-        console.log('Restart');
-    });
+    */
     
     document.addEventListener('keydown', function (e) {
         if (e.keyCode === 32) {
             // Pause / unpause on spacebar
-            togglePause();
+            cosmic.playback.toggle();
             e.preventDefault();
         }
     });
     
-    var togglePause = function () {
-        cosmic.playback.isPaused()
-            ? cosmic.playback.unpause()
-            : cosmic.playback.pause();
+    var win = function () {
+        cosmic.ui.objects[1].display.attrs.stat = 'Win';
+        cosmic.playback.pause();
+        console.log('Win!');
+        
     };
+    
+    var lose = function () {
+        cosmic.ui.objects[1].display.attrs.stat = 'Fail';
+        cosmic.playback.pause();
+        console.log('Lose!');
+    }
     
     cosmic.hub.on('path:intersect:destination', function (point) {
         console.log('You win!');
         //cosmic.playback.unpause();
+    })
+    
+    cosmic.hub.on('planet:collide', function () {
+        lose();
+    })
+    
+    cosmic.hub.on('destination:collide', function () {
+        win();
     })
     
     /*
@@ -164,8 +181,6 @@
 
     // Start planeteer
     console.log('Starting Planeteer');
-    cosmic.playback.pause();
-    //cosmic.playback.step();
     cosmic.playback.start(true);
 
 })(cosmic, freebody, Planet, Ship, Destination);

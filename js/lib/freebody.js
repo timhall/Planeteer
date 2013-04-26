@@ -1,4 +1,3 @@
-// Freebody.js - Free-body mechanics / physics engine in javascript
 // (c) Tim Hall - https://github.com/timhall/freebody.js - License: MIT
 
 var freebody = (function(global){
@@ -316,7 +315,7 @@ freebody.Body = (function (Vector, utils) {
         timestep: 8,
         
         // Set maximum advance time to avoid infinite loops
-        maxAdvanceTime: 30000
+        maxAdvanceTime: 60000
     };
 
     /**

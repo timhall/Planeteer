@@ -60,13 +60,14 @@ cosmic.ui = (function (_, Kinetic, utils) {
         shipData.setY(cosmic.camera.stage.attrs.height - 80 + 12);
     };
     
-    ui.objects.push({ display: shipData, draw: dataUpdate});
+    //ui.objects.push({ display: shipData, draw: dataUpdate});
     
     //------------------------   MINIMAP   --------------------------
     
     var minimap = new Kinetic.Group({
         x: 10,
-        y: 10
+        y: 10,
+        opacity: 0.7
     });
     
     minimap.add(new Kinetic.Rect({
@@ -82,19 +83,18 @@ cosmic.ui = (function (_, Kinetic, utils) {
         stroke: '#00BFFF',
         strokeWidth: 2,
         x: -2,
-        y: -2,
-        opacity: 0.5
+        y: -2
     }));
     //console.log(cosmic.environment);
     
     var mapUpdate = function () {
-        minimap.setX(cosmic.camera.stage.attrs.width - 245);
-        minimap.setY(cosmic.camera.stage.attrs.height - 185);
+        minimap.setX(cosmic.camera.stage.attrs.width - (245 + 3));
+        minimap.setY(cosmic.camera.stage.attrs.height - (185 + 3));
         
         if (minimap.children.length < 3) {
             for (var i = 0; i < cosmic.environment.objects.length; i++) {
                 minimap.add(new Kinetic.Circle({
-                    radius: cosmic.environment.objects[i].options.radius / 10,
+                    radius: cosmic.environment.objects[i].options.radius / 20,
                     fill: cosmic.environment.objects[i].options.color,
                     opacity: 1,
                     parObject: cosmic.environment.objects[i]
@@ -111,21 +111,22 @@ cosmic.ui = (function (_, Kinetic, utils) {
         }
         
         for (var i = 2; i < minimap.children.length; i++) {
-            minimap.children[i].setX(minimap.children[i].attrs.parObject.x / 10);
-            minimap.children[i].setY(minimap.children[i].attrs.parObject.y / 10);
+            minimap.children[i].setX(minimap.children[i].attrs.parObject.x / 20);
+            minimap.children[i].setY(minimap.children[i].attrs.parObject.y / 20);
         }
         
         //Camera readout. Probably not final.
-        minimap.children[minimap.children.length-1].setX(minimap.children[minimap.children.length-1].attrs.parObject.position.x / 10);
-        minimap.children[minimap.children.length-1].setY(minimap.children[minimap.children.length-1].attrs.parObject.position.y / 10);
-        minimap.children[minimap.children.length-1].setWidth(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.x / 10);
-        minimap.children[minimap.children.length-1].setHeight(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.y / 10);
+        minimap.children[minimap.children.length-1].setX(minimap.children[minimap.children.length-1].attrs.parObject.position.x / 20);
+        minimap.children[minimap.children.length-1].setY(minimap.children[minimap.children.length-1].attrs.parObject.position.y / 20);
+        minimap.children[minimap.children.length-1].setWidth(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.x / 20);
+        minimap.children[minimap.children.length-1].setHeight(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.y / 20);
         //console.log(minimap.children[2].attrs.parObject);
     };
     
     ui.objects.push({ display: minimap, draw: mapUpdate});
     
     //------------------------   SELECTION   --------------------------
+    // Removed from demo for now
     
     var selection = new Kinetic.Group({
         x: 160,
@@ -182,6 +183,111 @@ cosmic.ui = (function (_, Kinetic, utils) {
     }
     
     //ui.objects.push({ display: selection,  draw: selectUpdate});
+    
+    //------------------------   Status   --------------------------
+    
+    var status = new Kinetic.Group({
+        x: 10,
+        y: 10,
+        init: false,
+        stat: 'Normal',
+        opacity: 0.7
+    });
+    
+    status.add(new Kinetic.Rect({
+        fill: '#00BFFF',
+        width: 245,
+        height: 40,
+        cornerRadius: 5
+    }))
+    
+    status.add(new Kinetic.Text({
+        height: 40,
+        width: 244,
+        align: 'center',
+        text:'No Alerts',
+        fill: 'white',
+        fontSize: 29,
+        offset: {y:-5, x:0}
+    }))
+    
+    var statusUpdate = function () {
+        if (!status.attrs.init) {
+            status.setX(cosmic.camera.stage.attrs.width - (245 + 5));
+            status.setY(cosmic.camera.stage.attrs.height - (230 + 4));
+            status.init = true;
+        }
+        
+        if (status.attrs.stat == 'Normal') {
+            status.children[0].setFill('#00BFFF');
+            status.children[1].setText('No Alerts');
+        } else if (status.attrs.stat == 'Incoming') {
+            status.children[0].setFill('#B40404');
+            status.children[1].setText('Collision Imminent!');
+        } else if (status.attrs.stat == 'Fail') {
+            status.children[0].setFill('#B40404');
+            status.children[1].setText('Voyage Failed!');
+        } else if (status.attrs.stat == 'Winning' ) {
+            status.children[0].setFill('green');
+            status.children[1].setText('Predicted Success!');
+        } else if (status.attrs.stat == 'Win') {
+            status.children[0].setFill('green');
+            status.children[1].setText('Successful Journey!');
+        } else if (status.attrs.stat == 'Escaping') {
+            status.children[0].setFill('#B40404');
+            status.children[1].setText('Escape Trajectory!');
+        }
+        
+    }
+    
+    ui.objects.push({ display: status,  draw: statusUpdate});
+    
+        
+    var playPauseButton = new Kinetic.Group({
+        x:5,
+        y:705,
+        opacity: 0.7
+    });
+        
+    playPauseButton.add(new Kinetic.Rect({
+        width: 40,
+        height: 40,
+        fill: '#00BFFF',
+        cornerRadius: 5,
+    }));
+    
+    playPauseButton.add(new Kinetic.Polygon({
+        points: [10,10,10,30,31,20],
+        fill: 'white'
+    }));
+    
+    playPauseButton.underlying = { type: 'PlayPauseButton' };
+    
+    var restartButton = new Kinetic.Group({
+        x:50,
+        y:705,
+        opacity: 0.7,
+    });
+        
+    restartButton.add(new Kinetic.Rect({
+        width: 40,
+        height: 40,
+        fill: '#00BFFF',
+        cornerRadius: 5,
+    }));
+    
+    restartButton.underlying = { type: 'RestartButton' };
+    
+    cosmic.hub.on('touchend', function (e, selected) {
+        if (selected && selected.type === 'PlayPauseButton') {
+            cosmic.playback.toggle();
+        } else if (selected && selected.type === 'RestartButton') {
+            console.log('restart');
+        }
+    });
+    
+    ui.objects.push({ display: playPauseButton });
+    ui.objects.push({ display: restartButton });
     
     return ui;
 })(_, Kinetic, freebody.utils);

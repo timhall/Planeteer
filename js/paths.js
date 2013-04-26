@@ -24,7 +24,7 @@ cosmic.paths = (function (_, Kinetic, utils) {
                 tension: 0
             })
             
-            drawPath(obj.path(), path);
+            drawPath(obj.path(60000), path);
             
             tracked.push({
                 obj: obj,
@@ -79,14 +79,24 @@ cosmic.paths = (function (_, Kinetic, utils) {
                 } else if (collided && collided.options.type == 'Planet') {
                     console.log(point);
                     trackedObj.points = points.slice(0, index + 1);
-                    trackedObj.path.setStroke('red');
+                    trackedObj.path.setStroke('#B40404');
+                    cosmic.ui.objects[1].display.attrs.stat = 'Incoming';
                     return true;
                } else if (collided && collided.options.type == 'Destination') {
-                    console.log(point);
+                    console.log('Travel time: ' + point.t/1000);
                     trackedObj.points = points.slice(0, index + 1);
                     trackedObj.path.setStroke('green');
                     cosmic.hub.trigger('path:intersect:destination', point);
+                    cosmic.ui.objects[1].display.attrs.stat = 'Winning';
                     return true;
+               } else if (point.x < -buffer || point.x > cosmic.environment.bounds.width + buffer || point.y < -buffer || point.y > cosmic.environment.bounds.height + buffer) {
+                    console.log(point);
+                    trackedObj.points = points.slice(0, index + 1);
+                    trackedObj.path.setStroke('#B40404');
+                    cosmic.ui.objects[1].display.attrs.stat = 'Escaping';
+                    return true;
+               } else {
+                    cosmic.ui.objects[1].display.attrs.stat = 'Normal';
                };
             })
         })

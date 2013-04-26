@@ -14,7 +14,8 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
             jetting: 0,
             angle: null,
             spinCount: 0,
-            type: 'Ship'
+            type: 'Ship',
+            initOptions: null
         })
         .methods({
             draw: function (offset, zoom) {
@@ -65,10 +66,15 @@ var Ship = (function (cosmic, _, Kinetic, art, Vector, utils, CameraBase) {
             },
             
             collide: function (obj) {
-                if (obj.options.type != 'Destination') {
-                    cosmic.collisions.utils.bounce(this, obj);
-                    this.options.spin = !this.options.spin;
+                if (obj.options.type == 'Planet') {
+                    //cosmic.collisions.utils.bounce(this, obj);
+                    //this.options.spin = !this.options.spin;
+                    cosmic.hub.trigger('planet:collide', this);
+                } else if (obj.options.type == 'Destination') {
+                    cosmic.hub.trigger('destination:collide', this);
                 }
+                
+                console.log('hit');
             },
             
             thrust: function (body) {

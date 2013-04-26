@@ -65,6 +65,28 @@ var art = (function (Kinetic) {
         return { group: group, preScale: preScale };
     };
     
+    art.star = function (group, radius, preScale) {
+        group.setScale(radius/25, radius/25);
+        preScale = radius/25;
+        
+        group.add(new Kinetic.Circle({
+            radius: 32,
+            fillRadialGradientStartPoint: 0,
+            fillRadialGradientStartRadius: 0,
+            fillRadialGradientEndPoint: 0,
+            fillRadialGradientEndRadius: 32,
+            fillRadialGradientColorStops: [0, '#FACC2E', 0.4, '#FACC2E', 1, 'black'],
+            opacity: 0.7
+        }));
+        
+        group.add(new Kinetic.Circle({
+            radius:25,
+            fill: '#FACC2E'
+        }));
+        
+        return { group: group, preScale: preScale };
+    }
+    
     art.fighter = function (group, radius, preScale, color) {
         group.setScale(radius/25, radius/25);
         preScale = radius/25;

@@ -29,7 +29,7 @@ cosmic.playback = (function (global, hub) {
     };
 
     playback.start = function (paused) {
-        if (!paused) { playback.unpause(); }
+        paused ? playback.pause() : playback.unpause();
         playback.progress();
         running = true;
 
@@ -102,6 +102,12 @@ cosmic.playback = (function (global, hub) {
         running = false;
 
         hub.trigger('playback:stop');
+    };
+    
+    playback.toggle = function () {
+        playback.isPaused()
+            ? playback.unpause()
+            : playback.pause();
     };
     
     playback.isPaused = function () {

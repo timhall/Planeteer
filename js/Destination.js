@@ -10,7 +10,8 @@ var Destination = (function (cosmic, _, Kinetic, art) {
             preScale: 1,
             type: 'Destination',
             _resetting: false,
-            _destTime: null
+            _destTime: null,
+            initOptions: null
         })
         .methods({
             draw: function (offset, zoom) {
@@ -28,13 +29,14 @@ var Destination = (function (cosmic, _, Kinetic, art) {
                 }
             },
             collide: function (obj) {
-                    this.display.children[0].setFill('#F78181');
+                    /*this.display.children[0].setFill('#F78181');
                     console.log('destination colliding', this._resetting);
                     if (this.options._resetting == false) {
                         //this.options._destTime = cosmic.time;
                         cosmic.playback.pause();
                         console.log(this.options.destTime, cosmic.time);
-                    }
+                    }*/
+                    cosmic.hub.trigger('destination:collide', this);
             },
             drag: function (e) {
                 if (e && cosmic.camera) {

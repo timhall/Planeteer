@@ -94,6 +94,7 @@ cosmic.environment = (function (freebody, _) {
     environment.outOfBounds = function (obj) {
         if (obj.x < -10) {
             obj.x = environment.bounds.width + 10;
+            
         } else if (obj.x > environment.bounds.width + 10) {
             obj.x = -10;
         }

@@ -75,11 +75,11 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 
                 // Trigger touchstart on hub
                 cosmic.hub.trigger('touchstart', e, selection);
+                cosmic.selected = selected = selection;
                 
                 // Trigger event on shape unless handled
-                if (!e.handled && selection) {
+                if (!e.handled && selection && selection.trigger) {
                     selection.trigger('touchstart', e);
-                    cosmic.selected = selected = selection;
                 }
                 
                 tracking = true;
@@ -90,7 +90,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                 if (tracking) {
                     cosmic.hub.trigger('touchmove', e, selected);
                     
-                    if (!e.handled && selected) {
+                    if (!e.handled && selected && selected.trigger) {
                         selected.trigger('touchmove', e);
                     }   
                 }
@@ -100,7 +100,7 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
             handlers.touchend = function (e) {
                 cosmic.hub.trigger('touchend', e, selected);
                 
-                if (!e.handled && selected) {
+                if (!e.handled && selected && selected.trigger) {
                     selected.trigger('touchend', e);
                 }
                 
