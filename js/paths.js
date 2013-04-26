@@ -42,8 +42,9 @@ cosmic.paths = (function (_, Kinetic, utils) {
     };
     
     paths.update = function () {
+        //console.log('Update paths');
         var buffer = 0,
-            points, collided;
+            points, collided, newStatus;
         
         paths.place();
         
@@ -77,29 +78,47 @@ cosmic.paths = (function (_, Kinetic, utils) {
                     // Continue find
                     return false;
                 } else if (collided && collided.options.type == 'Planet') {
-                    console.log(point);
+                    //console.log(point);
                     trackedObj.points = points.slice(0, index + 1);
                     trackedObj.path.setStroke('#B40404');
-                    cosmic.ui.objects[1].display.attrs.stat = 'Incoming';
+                    //if (cosmic.status !== 'Fail' && trackedObj.points.length > 10) {
+                        newStatus = 'Incoming';
+                    //} else {
+                    //    newStatus = '';
+                    //}
                     return true;
                } else if (collided && collided.options.type == 'Destination') {
-                    console.log('Travel time: ' + point.t/1000);
+                    //console.log('Travel time: ' + point.t/1000);
                     trackedObj.points = points.slice(0, index + 1);
                     trackedObj.path.setStroke('green');
                     cosmic.hub.trigger('path:intersect:destination', point);
-                    cosmic.ui.objects[1].display.attrs.stat = 'Winning';
+                    //if (cosmic.status !== 'Fail' && trackedObj.points.length > 10) {
+                        newStatus = 'Winning';
+                    //} else {
+                    //    newStatus = '';
+                    //}
                     return true;
                } else if (point.x < -buffer || point.x > cosmic.environment.bounds.width + buffer || point.y < -buffer || point.y > cosmic.environment.bounds.height + buffer) {
-                    console.log(point);
+                    //console.log(point);
                     trackedObj.points = points.slice(0, index + 1);
                     trackedObj.path.setStroke('#B40404');
-                    cosmic.ui.objects[1].display.attrs.stat = 'Escaping';
+                    //if (cosmic.status !== 'Fail' && trackedObj.points.length > 10) {
+                        newStatus = 'Escaping';
+                    //} else {
+                    //    newStatus = '';
+                    //}
                     return true;
                } else {
-                    cosmic.ui.objects[1].display.attrs.stat = 'Normal';
+                    //if (cosmic.status !== 'Fail') {// && trackedObj.points.length > 10) {
+                        newStatus = 'Normal';
+                    //} else {
+                    //    newStatus = '';
+                    //}
                };
-            })
-        })
+            });
+        });
+        
+        if (newStatus) { cosmic.status = newStatus; }
         
         for (var i = 0, max = tracked.length; i < max; i += 1) {
             drawPath(tracked[i].points, tracked[i].path);
@@ -124,7 +143,7 @@ cosmic.paths = (function (_, Kinetic, utils) {
     });
     cosmic.hub.on('collision', function () {
         //
-    })
+    });
     
     var drawPath = function (points, spline) {
         if (points) {

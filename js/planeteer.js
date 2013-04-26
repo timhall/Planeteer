@@ -6,7 +6,7 @@
     var states = {
         level1: {
             ship: { x: 150, y: 150 },
-            neptune: { x: 1000, y: 2100 },
+            neptune: { x: 1000, y: 1500 },
             jupiter: { x: 3100, y: 830 },
             sun: { x: 2400, y: 1800 },
             destination: { x: 2000, y: 2800 }
@@ -147,7 +147,8 @@
             && selection.type !== 'Ship') {
             cosmic.playback.pause();
         }
-    })
+    });
+    /*
     cosmic.hub.on('touchend', function (e) {
         //cosmic.playback.unpause();  
     });
@@ -155,9 +156,10 @@
         if (A.options.type === 'Destination' || B.options.type === 'Destination') {
             cosmic.playback.pause();
         } else {
-            cosmic.paths.update();
+            //cosmic.paths.update();
         } 
     });
+    */
     
     /*
     var meter = new FPSMeter(undefined, {
@@ -179,14 +181,16 @@
     });
     
     var win = function () {
-        cosmic.ui.objects[1].display.attrs.stat = 'Win';
+        cosmic.ui.updateStatus('Win');
+        //cosmic.ui.objects[1].display.attrs.stat = 'Win';
         cosmic.playback.pause();
         console.log('Win!');
         
     };
     
     var lose = function () {
-        cosmic.ui.objects[1].display.attrs.stat = 'Fail';
+        cosmic.ui.updateStatus('Fail');
+        //cosmic.ui.objects[1].display.attrs.stat = 'Fail';
         cosmic.playback.pause();
         console.log('Lose!');
     }
@@ -196,9 +200,8 @@
         //cosmic.playback.unpause();
     })
     
-    cosmic.hub.on('planet:collide outOfBounds', function () {
-        lose();
-    })
+    cosmic.hub.on('planet:collide', lose);
+    cosmic.hub.on('outOfBounds', lose);
     
     cosmic.hub.on('destination:collide', function () {
         win();

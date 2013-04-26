@@ -1,4 +1,4 @@
-cosmic.ui = (function (_, Kinetic, utils) {
+cosmic.ui = (function (_, Kinetic, utils, cosmic) {
 
     var ui = {};
     ui.objects = [];
@@ -212,29 +212,35 @@ cosmic.ui = (function (_, Kinetic, utils) {
         offset: {y:-5, x:0}
     }))
     
+    cosmic.status = 'Normal';
+    ui.updateStatus = function (statusValue) {
+        cosmic.status = statusValue;
+        
+        statusUpdate();
+    }
     var statusUpdate = function () {
         if (!status.attrs.init) {
             status.setX(cosmic.camera.stage.attrs.width - (245 + 5));
             status.setY(cosmic.camera.stage.attrs.height - (230 + 5));
             status.init = true;
         }
-        
-        if (status.attrs.stat == 'Normal') {
+        //console.log(cosmic.status);
+        if (cosmic.status == 'Normal') {
             status.children[0].setFill('#00BFFF');
             status.children[1].setText('No Alerts');
-        } else if (status.attrs.stat == 'Incoming') {
+        } else if (cosmic.status == 'Incoming') {
             status.children[0].setFill('#B40404');
             status.children[1].setText('Collision Imminent!');
-        } else if (status.attrs.stat == 'Fail') {
+        } else if (cosmic.status == 'Fail') {
             status.children[0].setFill('#B40404');
             status.children[1].setText('Voyage Failed!');
-        } else if (status.attrs.stat == 'Winning' ) {
+        } else if (cosmic.status == 'Winning' ) {
             status.children[0].setFill('green');
             status.children[1].setText('Predicted Success!');
-        } else if (status.attrs.stat == 'Win') {
+        } else if (cosmic.status == 'Win') {
             status.children[0].setFill('green');
             status.children[1].setText('Successful Journey!');
-        } else if (status.attrs.stat == 'Escaping') {
+        } else if (cosmic.status == 'Escaping') {
             status.children[0].setFill('#B40404');
             status.children[1].setText('Escape Trajectory!');
         }
@@ -243,7 +249,8 @@ cosmic.ui = (function (_, Kinetic, utils) {
     
     ui.objects.push({ display: status,  draw: statusUpdate});
     
-        
+    //------------------------   Buttons   --------------------------
+    
     var playPauseButton = new Kinetic.Group({
         x:5,
         y:705,
@@ -305,7 +312,6 @@ cosmic.ui = (function (_, Kinetic, utils) {
     });
     
     cosmic.hub.on('playback:pause', function () {
-        console.log('Pause');
         playPauseButton.children[2].setVisible(false);
     });
     cosmic.hub.on('playback:unpause', function () {
@@ -316,4 +322,4 @@ cosmic.ui = (function (_, Kinetic, utils) {
     ui.objects.push({ display: restartButton });
     
     return ui;
-})(_, Kinetic, freebody.utils);
+})(_, Kinetic, freebody.utils, cosmic);
