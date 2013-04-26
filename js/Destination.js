@@ -17,16 +17,16 @@ var Destination = (function (cosmic, _, Kinetic, art) {
             draw: function (offset, zoom) {
                 this.display.children[0].setFill(this.options.color);
                 //console.log(this.display.children[1].getRotation());
-                this.display.children[1].setRotation(this.display.children[1].attrs.rotation + 0.015);
+                this.display.children[1].setRotation(this.display.children[1].getRotation() + 0.015);
                 this.display.setX((this.x - offset.x)*zoom);
                 this.display.setY((this.y - offset.y)*zoom);
                     
                 this.display.setScale(this.options.preScale * zoom, this.options.preScale * zoom);
-                if (this.options._destTime && cosmic.time - this.options._destTime > 800) {
+                /*if (this.options._destTime && cosmic.time - this.options._destTime > 800) {
                     cosmic.reset();
                     this.options._destTime = null;
                     cosmic.unpause();
-                }
+                }*/
             },
             collide: function (obj) {
                     /*this.display.children[0].setFill('#F78181');

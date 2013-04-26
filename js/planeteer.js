@@ -142,8 +142,11 @@
     
     // Subscribe to events
     cosmic.hub.on('touchstart', function (e, selection) {
-        if (selection && selection.type === 'PlayPauseButton') return;
-        cosmic.playback.pause();
+        if (selection 
+            && selection.type !== 'PlayPauseButton'
+            && selection.type !== 'Ship') {
+            cosmic.playback.pause();
+        }
     })
     cosmic.hub.on('touchend', function (e) {
         //cosmic.playback.unpause();  

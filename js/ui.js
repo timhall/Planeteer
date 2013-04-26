@@ -268,7 +268,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
         stroke: 'white',
         strokeWidth: 5,
         cornerRadius: 5,
-        opacity: 0,
+        visible: false,
         offset: {x:-2, y:-2}
     }))
     
@@ -299,16 +299,17 @@ cosmic.ui = (function (_, Kinetic, utils) {
     cosmic.hub.on('touchend', function (e, selected) {
         if (selected && selected.type === 'PlayPauseButton') {
             cosmic.playback.toggle();
-            if (cosmic.playback.isPaused()) {
-                console.log(playPauseButton);
-                playPauseButton.children[2].setOpacity(0);
-            } else if (!cosmic.playback.isPaused()) {
-                console.log(playPauseButton);
-                playPauseButton.children[2].setOpacity(1);
-            }
         } else if (selected && selected.type === 'RestartButton') {
             cosmic.playback.restart();
         }
+    });
+    
+    cosmic.hub.on('playback:pause', function () {
+        console.log('Pause');
+        playPauseButton.children[2].setVisible(false);
+    });
+    cosmic.hub.on('playback:unpause', function () {
+        playPauseButton.children[2].setVisible(true);
     });
     
     ui.objects.push({ display: playPauseButton });
