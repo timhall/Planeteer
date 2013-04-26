@@ -103,6 +103,7 @@ cosmic.environment = (function (freebody, _) {
     environment.outOfBounds = function (obj) {
         if (obj.x < -10) {
             obj.x = environment.bounds.width + 10;
+            
         } else if (obj.x > environment.bounds.width + 10) {
             obj.x = -10;
         }
@@ -145,7 +146,7 @@ cosmic.CameraBase = (function (_, environment) {
         
         this.position = { x: 0, y: 0 };
         this.scale = 1;
-        this.initSize = {x: 800, y: 600};
+        this.initSize = {x: 1000, y: 750};
         this.viewSize = {x: this.initSize.x / this.scale, y: this.initSize.y / this.scale};
         
         // Internal properties
@@ -167,6 +168,8 @@ cosmic.CameraBase = (function (_, environment) {
         } else {
             _.each(_.keys(camera._layers), camera.renderLayer, camera);
         }
+        
+        cosmic.hub.trigger('camera:render');
     };
     
     /**
@@ -210,6 +213,8 @@ cosmic.CameraBase = (function (_, environment) {
                 this.position.x = this.following.x - 400/this.scale;
                 this.position.y = this.following.y - 300/this.scale;
                 //console.log(this.position.x + ' | ' +  this.position.y)
+                
+                cosmic.hub.trigger('camera:follow');
             }
             matter.draw(this.position, this.scale); 
         }
@@ -223,9 +228,7 @@ cosmic.CameraBase = (function (_, environment) {
      * @prototype
      */
     CameraBase.prototype.follow = function (object) {
-        console.log('called');
         this.following = object;
-        console.log(this.following);
     }
     
     CameraBase.prototype.stopFollow = function () {
@@ -306,6 +309,7 @@ cosmic.collisions = (function (freebody, _) {
                     //}
                     //forceExertedOnCircle(obj, this);
                         //console.log(this.options.type, obj.options.type);
+                    /*
                     if (this.options.type != 'Destination' && obj.options.type != 'Destination') {
                         //console.log(this.options.type, obj.options.type);
                         bounce(obj, this);
@@ -313,6 +317,7 @@ cosmic.collisions = (function (freebody, _) {
                     if (this.options.type == 'Planet' && obj.options.type == 'Planet') {
                         cosmic.reset();
                     }
+                    */
                     return true;
                 };
             }     
@@ -466,103 +471,62 @@ cosmic.collisions = (function (freebody, _) {
         //    relative orientation is now 0 deg
         //
         
-        // Get bounding box for matter
-        var box = bounding(matter).box;
-        
-        // Find distance from center of matter to point
-        var distance = utils.distance(point, matter);
-        
-        // Find angle from matter to point
-        var angle = utils.angle(matter, point);
-        
-        // Rotate angle to account for bounding box angle and angle of matter
-        angle -= box.theta + matter.angle;
-        
-        // Find point that is relative to matter as 0,0 (rotated and distance)
-        // (undefined sets initial point as 0, 0)
-        var relativePoint = utils.relativePoint(undefined, angle, distance);
-        
-        // Find bounding box parameters
-        var left = box.offsetLength - box.height,
-            right = box.offsetLength,
-            top = box.width/2,
-            bottom = -box.width/2;
-        
-        // Finally, check if point is inside box parameters
-        return relativePoint.x >= left 
-            && relativePoint.x <= right 
-            && relativePoint.y >= bottom 
-            && relativePoint.y <= top;
+        if (bounding(matter).box !== undefined) {
+            // Get bounding box for matter
+            var box = bounding(matter).box;
+            
+            // Find distance from center of matter to point
+            var distance = utils.distance(point, matter);
+            
+            // Find angle from matter to point
+            var angle = utils.angle(matter, point);
+            
+            // Rotate angle to account for bounding box angle and angle of matter
+            angle -= box.theta + matter.angle;
+            
+            // Find point that is relative to matter as 0,0 (rotated and distance)
+            // (undefined sets initial point as 0, 0)
+            var relativePoint = utils.relativePoint(undefined, angle, distance);
+            
+            // Find bounding box parameters
+            var left = box.offsetLength - box.height,
+                right = box.offsetLength,
+                top = box.width/2,
+                bottom = -box.width/2;
+            
+            // Finally, check if point is inside box parameters
+            return relativePoint.x >= left 
+                && relativePoint.x <= right 
+                && relativePoint.y >= bottom 
+                && relativePoint.y <= top;
+        } else if (bounding(matter).radius !== undefined) {
+            
+        }
     };
     
     /**
-     * Find amount of force exerted on each object.
+     * Perform bounce between two objects,
+     * only affecting first object
+     * (have to call the inverse for other object)
      * 
-     * 
-     */ 
-    //I believe the velocity equation is v1' = (m2v2)/m1
-    //Actually no. Close, but too elastic or whatno
-    
-    
-    var forceExertedOnCircle = function (A, B) {
-        // Determine the angle from the center of the planet to the center of the ship
-        // (Why do you think the neg is here)
-        var impactAngle = -utils.angle(A, B);
-        
-        // Get current velocity
-        var forceTotal = B.v.magnitude();
-        var forceAngle = -B.v.angle();
-        
-        // Since the planet velocity isn't affected the ship velocity is constant
-        // (Won't be case for ship-to-ship)
-        // ship.v.magnitude(constant...);
-        
-        var forceExerted = forceTotal * Math.abs(Math.cos(utils.radians(forceAngle - impactAngle))); //I don't think this is correct, but it's close
-        
-        // Set angle of ship based on impact angle
-        // (This is interesting, the two 90s seem strange and probably won't work for ship-to-ship)
-        B.v.angle(-(B.v.angle() - (2*(90 - impactAngle))));
-        
-        // Adjust angle if necessary to keep between 0 and 360
-        if (B.v.angle() > 360) { B.v.angle(B.v.angle() - 360); 
-        
-        if (A.mass * A.v.magnitude()) {
-        B.v.magnitude((A.mass * A.v.magnitude()) / B.mass);         //Just trying stuff out
-        }
-        
-        }
-        
-        //console.log(impactAngle);
-        //console.log(forceAngle);
-        //console.log('Force exerted: ' + forceExerted + ' | Magnitude ' + ship.v.magnitude() + ' | Multiplier: ' + Math.abs(Math.cos(utils.radians(forceAngle - impactAngle))));
-        //console.log(ship.v.angle() + ' | ' + Math.abs(ship.v.angle() + forceAngle))
-        
-    };
-    
-    var bounce = function (A, B) {
-        var impactAngle = utils.angle(A, B);
-        //console.log('Bounce: ', A, B);
+     * @param {Body} active
+     * @param {Body} other
+     */
+    var bounce = collisions.utils.bounce = function (active, other) {
+        var impactAngle = utils.angle(active, other);
     
         // Flip angle around impact angle and then flip (-180)
-        var angleANew = impactAngle + (impactAngle - A.v.angle()) - 180;
-        var angleBNew = impactAngle + (impactAngle - B.v.angle()) - 180;
+        var newAngle = impactAngle + (impactAngle - active.v.angle()) - 180;
+        var newMagnitude = Math.abs(
+            (active.v.magnitude() * (active.mass - other.mass) + 2 * other.mass * other.v.magnitude()) / (active.mass + other.mass)
+        );
         
-        var magANew = Math.abs((A.v.magnitude() * (A.mass - B.mass) + 2 * B.mass * B.v.magnitude()) / (A.mass + B.mass));
-        var magBNew = Math.abs((B.v.magnitude() * (B.mass - A.mass) + 2 * A.mass * A.v.magnitude()) / (A.mass + B.mass));
-        
-        
-        if (A.v.magnitude() > 0) {
-            A.v.angle(angleANew > 360 ? angleANew - 360 : angleANew);
-            A.v.magnitude(magANew);
-        }
-        
-        if (B.v.magnitude() > 0) {
-            B.v.angle(angleBNew > 360 ? angleBNew - 360 : angleBNew);
-            B.v.magnitude(magBNew);
+        // Set angle and magnitude
+        if (active.v.magnitude() > 0) {
+            active.v.angle(newAngle > 360 ? newAngle - 360 : newAngle);
+            active.v.magnitude(newMagnitude);
         }
     };
-    
-    
     
     /**
      * Get/set bounding property on Matter prototype
@@ -632,8 +596,9 @@ cosmic.Matter = (function (freebody, _, Backbone) {
                 
                 // Check collision (if defined)
                 if (_.isFunction(matter.checkCollision) && matter.checkCollision(obj)) {
-                    matter.collide(obj);
-                    obj.collide(matter);
+                    matter.trigger('collision', obj);
+                    obj.trigger('collision', matter);
+                    cosmic.hub.trigger('collision', matter, obj);
                     
                     return true;
                 }
@@ -655,13 +620,13 @@ cosmic.Matter = (function (freebody, _, Backbone) {
     return Matter;
 })(freebody, _, Backbone);
 
-cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
+cosmic.gamePiece = (function (cosmic, Matter, _, Kinetic) {
 
     /**
      * Wrapper for "game piece" functionality
      */
     var gamePiece = function () {
-        var piece = this;
+        var piece = {};
         
         // Generic GamePiece object that's being created
         var GamePiece = function (options) {
@@ -771,7 +736,7 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
          */
         piece.collisions = function (strategy, bounding) {
             // Find collision approach for strategy
-            var collision = collisions[strategy];
+            var collision = cosmic.collisions[strategy];
             if (collision) {
                 _.extend(GamePiece.prototype, 
                     collision.methods, {
@@ -808,7 +773,7 @@ cosmic.gamePiece = (function (Matter, collisions, _, Kinetic) {
     // Finally, return
     return gamePiece;
 
-})(cosmic.Matter, cosmic.collisions, _, Kinetic);
+})(cosmic, cosmic.Matter, _, Kinetic);
 
 cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
     /**
@@ -821,8 +786,8 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
         // Create main stage
         this.stage = new Kinetic.Stage({
             container: containerId,
-            width: (options && options.width) || 800,
-            height: (options && options.height) || 600
+            width: (options && options.width) || 1000,
+            height: (options && options.height) || 750
         });
         
         this._displayLayers = {};
@@ -876,90 +841,90 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
         
         _setupTracking: function () {
             var self = this,
+                handlers = {},
                 tracking, selected, shifting;
     
-            if (self.stage) {
-                // Setup full size rectangle to track clicks
-                /*
-                var tracking = new Kinetic.Rect({
-                    width: this.stage.attrs.width,
-                    height: this.stage.attrs.height,
-                    opacity: 0
-                });
-                tracking.isTrackingLayer = true;
-    
-                // Add tracking layer
-                this.layer('tracking', [
-                    { display: tracking }
-                ]);
-                */
-    
-                // "Touch start" event handler
-                var touchstart = function (e) {
-                    // Get shape from event
-                    var shape = getShape(e),
-                        selection = shape.underlying;
-                    
-                    // Trigger touchstart on hub
-                    cosmic.hub.trigger('touchstart', e, selection);
-                    
-                    // Trigger event on shape unless handled
-                    if (!e.handled && selection) {
-                        selection.trigger('touchstart', e);
-                        cosmic.selected = selected = selection;
-                    }
-                    
-                    tracking = true;
-                };
-    
-                // "Touch move" event handler
-                var touchmove = function (e) {
-                    if (tracking) {
-                        cosmic.hub.trigger('touchmove', e, selected);
-                        
-                        if (!e.handled && selected) {
-                            selected.trigger('touchmove', e);
-                        }   
-                    }
-                };
-    
-                // "Touch end" event handler
-                var touchend = function (e) {
-                    cosmic.hub.trigger('touchend', e, selected);
-                    
-                    if (!e.handled && selected) {
-                        selected.trigger('touchend', e);
-                    }
-                    
-                    cosmic.selected = selected = undefined;
-                    tracking = false;
+            // "Touch start" event handler
+            handlers.touchstart = function (e) {
+                // Get shape from event
+                var shape = getShape(e),
+                    selection = shape.underlying;
+                
+                // Trigger touchstart on hub
+                cosmic.hub.trigger('touchstart', e, selection);
+                cosmic.selected = selected = selection;
+                
+                // Trigger event on shape unless handled
+                if (!e.handled && selection && selection.trigger) {
+                    selection.trigger('touchstart', e);
                 }
-    
-                // Setup event listeners on stage
-                self.stage.on('mousedown' || 'touchstart', touchstart);
-                self.stage.on('mousemove' || 'touchmove', touchmove);
-                self.stage.on('mouseup' || 'touchend', touchend);
+                
+                tracking = true;
+            };
+
+            // "Touch move" event handler
+            handlers.touchmove = function (e) {
+                if (tracking) {
+                    cosmic.hub.trigger('touchmove', e, selected);
+                    
+                    if (!e.handled && selected && selected.trigger) {
+                        selected.trigger('touchmove', e);
+                    }   
+                }
+            };
+
+            // "Touch end" event handler
+            handlers.touchend = function (e) {
+                cosmic.hub.trigger('touchend', e, selected);
+                
+                if (!e.handled && selected && selected.trigger) {
+                    selected.trigger('touchend', e);
+                }
+                
+                cosmic.selected = selected = undefined;
+                tracking = false;
             }
             
-            // Listen to mouse wheel event
+            handlers.scale = function (value) {
+                var zoom = self.scale * (1 + value);
+                if (zoom > 0.15 && zoom < 2) {
+                    self.zoom(zoom);
+                    cosmic.hub.trigger('camera:zoom', zoom);
+                }
+            }
+    
+            // Add listeners
+            if (self.stage) {
+                // Setup event listeners on stage
+                self.stage.on('mousedown' || 'touchstart', handlers.touchstart);
+                self.stage.on('mousemove' || 'touchmove', handlers.touchmove);
+            }
+            
+            document.addEventListener('mouseup', handlers.touchend);
             document.addEventListener('mousewheel', function (e) {
-                cosmic.hub.trigger('zoom', e.wheelDeltaY/1440);
-            }, true);
+                handlers.scale(e.wheelDeltaY/1440);
+            });
             
             cosmic.hub.on('touchstart', function (e, selection) {
                 if (selection && e.ctrlKey && e.shiftKey) {
+                    // Follow: if something is selected and ctrl + shift
                     self.follow(selection);
                 
                     e.handled = true;
                 } else if (e.ctrlKey && !e.shiftKey) {
+                    // Center: ctrl
+                    
                     self.following = undefined;
                     var prePosX = self.position.x;
                     var prePosY = self.position.y;
                     self.position.x = ((e.layerX)/self.scale) + prePosX - (400/self.scale);
                     self.position.y = ((e.layerY)/self.scale) + prePosY - (300/self.scale);
                     
+                    cosmic.hub.trigger('camera:center', self);
                     e.handled = true;
                 } else if (e.shiftKey && !e.ctrlKey) {
+                    // Pan: shift + drag
+                    
                     shifting = {
                         x: e.layerX,
                         y: e.layerY
@@ -976,19 +941,13 @@ cosmic.KineticCamera = (function (CameraBase, _, Kinetic) {
                     shifting.x = e.layerX;
                     shifting.y = e.layerY;
                     
+                    cosmic.hub.trigger('camera:pan', self);
                     e.handled = true;
                 } 
             });
             
             cosmic.hub.on('touchend', function (e, selection) {
                 shifting = undefined;
-            });
-            
-            cosmic.hub.on('zoom', function (scale) {
-                var zoom = self.scale * (1 + scale);
-                if (zoom > 0.15 && zoom < 2) {
-                    self.zoom(zoom);
-                }
             });
         }
     });
@@ -1040,7 +999,7 @@ cosmic.playback = (function (global, hub) {
     };
 
     playback.start = function (paused) {
-        if (!paused) { playback.unpause(); }
+        paused ? playback.pause() : playback.unpause();
         playback.progress();
         running = true;
 
@@ -1113,6 +1072,18 @@ cosmic.playback = (function (global, hub) {
         running = false;
 
         hub.trigger('playback:stop');
+    };
+    
+    playback.toggle = function () {
+        playback.isPaused()
+            ? playback.unpause()
+            : playback.pause();
+    };
+    
+    playback.isPaused = function () {
+        return !!_.some(_.values(paused), function (value) {
+            return value;
+        });
     };
 
     return playback;

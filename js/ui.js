@@ -203,7 +203,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
     
     status.add(new Kinetic.Text({
         height: 40,
-        width: 244,
+        width: 245,
         align: 'center',
         text:'No Alerts',
         fill: 'white',
@@ -214,7 +214,7 @@ cosmic.ui = (function (_, Kinetic, utils) {
     var statusUpdate = function () {
         if (!status.attrs.init) {
             status.setX(cosmic.camera.stage.attrs.width - (245 + 5));
-            status.setY(cosmic.camera.stage.attrs.height - (230 + 4));
+            status.setY(cosmic.camera.stage.attrs.height - (230 + 5));
             status.init = true;
         }
         
