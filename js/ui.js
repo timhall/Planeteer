@@ -101,26 +101,27 @@ cosmic.ui = (function (_, Kinetic, utils) {
                 }));
             }
             
-            minimap.add(new Kinetic.Rect({
+            /*minimap.add(new Kinetic.Rect({
                 stroke: 'white',
                 strokeWidth: 1,
                 parObject: cosmic.camera,
                 width: 5,
                 height: 5
-            }));
+            }));*/
         }
         
         for (var i = 2; i < minimap.children.length; i++) {
             minimap.children[i].setX(minimap.children[i].attrs.parObject.x / 20);
             minimap.children[i].setY(minimap.children[i].attrs.parObject.y / 20);
         }
-        
+        /*
         //Camera readout. Probably not final.
         minimap.children[minimap.children.length-1].setX(minimap.children[minimap.children.length-1].attrs.parObject.position.x / 20);
         minimap.children[minimap.children.length-1].setY(minimap.children[minimap.children.length-1].attrs.parObject.position.y / 20);
         minimap.children[minimap.children.length-1].setWidth(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.x / 20);
         minimap.children[minimap.children.length-1].setHeight(minimap.children[minimap.children.length-1].attrs.parObject.viewSize.y / 20);
         //console.log(minimap.children[2].attrs.parObject);
+        */
     };
     
     ui.objects.push({ display: minimap, draw: mapUpdate});
@@ -261,6 +262,16 @@ cosmic.ui = (function (_, Kinetic, utils) {
         fill: 'white'
     }));
     
+    playPauseButton.add(new Kinetic.Rect({
+        width: 36,
+        height: 36,
+        stroke: 'white',
+        strokeWidth: 5,
+        cornerRadius: 5,
+        opacity: 0,
+        offset: {x:-2, y:-2}
+    }))
+    
     playPauseButton.underlying = { type: 'PlayPauseButton' };
     
     var restartButton = new Kinetic.Group({
@@ -276,13 +287,27 @@ cosmic.ui = (function (_, Kinetic, utils) {
         cornerRadius: 5,
     }));
     
+    restartButton.add(new Kinetic.Path({
+        data: 'M12.582,9.551C3.251,16.237,0.921,29.021,7.08,38.564l-2.36,1.689l4.893,2.262l4.893,2.262l-0.568-5.36l-0.567-5.359l-2.365,1.694c-4.657-7.375-2.83-17.185,4.352-22.33c7.451-5.338,17.817-3.625,23.156,3.824c5.337,7.449,3.625,17.813-3.821,23.152l2.857,3.988c9.617-6.893,11.827-20.277,4.935-29.896C35.591,4.87,22.204,2.658,12.582,9.551z',
+        fill: 'white',
+        scale: {x:0.75, y:0.75},
+        offset: {x:-2, y:-1}
+    }));
+    
     restartButton.underlying = { type: 'RestartButton' };
     
     cosmic.hub.on('touchend', function (e, selected) {
         if (selected && selected.type === 'PlayPauseButton') {
             cosmic.playback.toggle();
+            if (cosmic.playback.isPaused()) {
+                console.log(playPauseButton);
+                playPauseButton.children[2].setOpacity(0);
+            } else if (!cosmic.playback.isPaused()) {
+                console.log(playPauseButton);
+                playPauseButton.children[2].setOpacity(1);
+            }
         } else if (selected && selected.type === 'RestartButton') {
-            console.log('restart');
+            cosmic.playback.restart();
         }
     });
     

@@ -102,16 +102,23 @@ cosmic.environment = (function (freebody, _) {
      */
     environment.outOfBounds = function (obj) {
         if (obj.x < -10) {
-            obj.x = environment.bounds.width + 10;
-            
+            //obj.x = environment.bounds.width + 10;
+            cosmic.hub.trigger('outOfBounds', obj);
+            return;
         } else if (obj.x > environment.bounds.width + 10) {
-            obj.x = -10;
+            //obj.x = -10;
+            cosmic.hub.trigger('outOfBounds', obj);
+            return;
         }
         
         if (obj.y < -10) {
-            obj.y = environment.bounds.height + 10;
+            //obj.y = environment.bounds.height + 10;
+            cosmic.hub.trigger('outOfBounds', obj);
+            return;
         } else if (obj.y > environment.bounds.height + 10) {
-            obj.y = -10;
+            //obj.y = -10;
+            cosmic.hub.trigger('outOfBounds', obj);
+            return;
         }
     };
     

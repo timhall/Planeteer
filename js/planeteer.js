@@ -3,14 +3,24 @@
     cosmic.environment.bounds.width *= 6;
     cosmic.environment.bounds.height *= 6;
     
+    var states = {
+        level1: {
+            ship: { x: 150, y: 150 },
+            neptune: { x: 1000, y: 2100 },
+            jupiter: { x: 3100, y: 830 },
+            sun: { x: 2400, y: 1800 },
+            destination: { x: 2000, y: 2800 }
+        }
+    }
+    
     // Set up ship and planets
     var ships = [
         new Ship({
             color: 'yellow',
-            radius: 25,
+            radius: 30,
             mass: 1000,
-            x: 150,
-            y: 150,
+            //x: 150,
+            //y: 150,
             name: 'Fighter'
         })
     ];
@@ -18,19 +28,19 @@
     var planets = [
         new Planet({
             color: '#6BCAF3',
-            radius: 70,
+            radius: 80,
             mass: 10000000000000000 * 8,
-            x: 1000,
-            y: 2100,
+            //x: 1000,
+            //y: 2100,
             image: 'blue',
             name: 'Neptune'
         }),
         new Planet({
             color: '#F16122',
-            radius: 100,
+            radius: 110,
             mass: 20000000000000000 * 8,
-            x: 3100,
-            y: 830,
+            //x: 3100,
+            //y: 830,
             image: 'orange',
             name: 'Jupiter'
         }),
@@ -38,8 +48,8 @@
             color: 'yellow',
             radius: 250,
             mass: 40000000000000000 * 8,
-            x: 2400,
-            y: 1800,
+            //x: 2400,
+            //y: 1800,
             image: 'star',
             name: 'Sun',
             movable: false
@@ -50,8 +60,8 @@
         new Destination({
             color: null,
             radius: 70,
-            x: 2000,
-            y: 2800,
+            //x: 2000,
+            //y: 2800,
             name: 'Destination'
         })    
     ]
@@ -70,9 +80,41 @@
         cosmic.paths.track(ships[i]);
     }
     
+    var setState = function (state) {
+        // Ship
+        var ship = ships[0];
+        ship.x = state.ship.x;
+        ship.y = state.ship.y;
+        ship.v = new freebody.Vector();
+        ship.a = new freebody.Vector();
+        
+        // Planets
+        var neptune = planets[0],
+            jupiter = planets[1],
+            sun = planets[2];
+        
+        neptune.x = state.neptune.x;
+        neptune.y = state.neptune.y;
+        jupiter.x = state.jupiter.x;
+        jupiter.y = state.jupiter.y;
+        sun.x = state.sun.x;
+        sun.y = state.sun.y;
+        
+        // Destination
+        var destination = destinations[0];
+        
+        destination.x = state.destination.x;
+        destination.y = state.destination.y;
+        
+        cosmic.paths.update();
+    }
+    var restart = cosmic.playback.restart = function () {
+        setState(states.level1);    
+    }
+    
     
     // Setup camera
-    var camera = new cosmic.KineticCamera('experiment');
+    var camera = new cosmic.KineticCamera('game');
     camera.scale = 5/24;
     camera.viewSize = { x: 4800, y: 3600 }
     camera.defaults = {
@@ -97,16 +139,6 @@
     window.ships = ships;
     window.planets = planets;
     window.destinations = destinations;
-    
-    cosmic.reset = function () {
-        _.each(cosmic.environment.objects, function (object) {
-            object.x = Math.floor(Math.random()*1400 + 100);
-            object.y = Math.floor(Math.random()*1200 + 100);
-            cosmic.camera.reset();
-            cosmic.iteration += 1;
-            console.log(cosmic.iteration);
-        })
-    };
     
     // Subscribe to events
     cosmic.hub.on('touchstart', function (e, selection) {
@@ -161,7 +193,7 @@
         //cosmic.playback.unpause();
     })
     
-    cosmic.hub.on('planet:collide', function () {
+    cosmic.hub.on('planet:collide outOfBounds', function () {
         lose();
     })
     
@@ -181,6 +213,7 @@
 
     // Start planeteer
     console.log('Starting Planeteer');
+    restart();
     cosmic.playback.start(true);
 
 })(cosmic, freebody, Planet, Ship, Destination);

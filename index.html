@@ -11,49 +11,64 @@
     <meta name="description" content="">
     
     <style>
+        /*! normalize.css v2.1.1 | MIT License | git.io/normalize */article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}audio,canvas,video{display:inline-block}audio:not([controls]){display:none;height:0}[hidden]{display:none}html{background:#fff;color:#000;font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}a:focus{outline:thin dotted}a:active,a:hover{outline:0}h1{font-size:2em;margin:.67em 0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}mark{background:#ff0;color:#000}code,kbd,pre,samp{font-family:monospace,serif;font-size:1em}pre{white-space:pre-wrap}q{quotes:"\201C" "\201D" "\2018" "\2019"}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}
         body, html {
-            background: #ccc;
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
+            background: #bdbdbd;
+            font-family: sans-serif;
         }
-        #experiment {
-            background: #fff;
+        #game {
+            background: #000;
             margin: 30px 30px;
             width: 1000px;
             height: 750px;
+            -moz-box-shadow: 0 0 50px #5e5e5e;
+            -webkit-box-shadow: 0 0 50px #5e5e5e;
+            box-shadow: 0 0 50px #5e5e5e;
+            float: left;
         }
         .details {
-            position:absolute;
-            top:30px;
-            left:1060px;
+            float: left;
             width:360px;
+            color: #fff;
+            
+            
+            
         }
-        .strike {
-            text-decoration: line-through;
+            .details .title {
+                text-align: right;
+                font-size: 210%;
+                border-bottom: solid 3px yellow;
+                padding-bottom: 2px;
+            }
+        
+        .footer {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: #000;
         }
     </style>
 </head>
 <body>
 
-    <div id="experiment"></div>
+    <div id="game"></div>
     
-    <div class="details"
-        <ul>
-            <li class="strike">Intersect detection for path to destination or planets.</li>
-            <li class="strike">Note: Check out paths:52 and see if I'm on the right track.</li>
-            <li class="strike">Start/pause button with pause gate thing in cosmic.</li>
-            <li class="strike">Camera functions on the path are broken.</li>
-            <li>Predictions still slightly wrong.</li>
-            <li class="strike">Mouse gets stuck down.</li>
-            <li class="strike">Fix the minimap scale.</li>
-        </ul>
+    <div class="details">
+        <h1 class="title">Planeteer</h1>
         
-        <a href="#" class="play-button">Play / Pause</a>
-        <a href="#" class="restart-button">Restart</a>
+        
+        <p>Blah blah blah</p>
+        <!--
+        <h2>Section title</h2>
+        <img src="..." />
+        <p>...</p>
+        -->
     </div>
+    
+    <footer class="footer">
+        By Riley and Tim Hall
+    </footer>
+    
     
     <!-- JS Libraries -->
     <script src="js/lib/rAF.js"></script>
@@ -66,7 +81,8 @@
     <script src="js/lib/freebody.js"></script>
     
     <!-- Cosmic -->
-    <!--<script src="js/lib/cosmic.min.js"></script>-->
+    <script src="js/lib/cosmic.min.js"></script>
+    <!--
     <script src="js/cosmic/build/cosmic.js"></script>
     <script src="js/cosmic/environment.js"></script>
     <script src="js/cosmic/CameraBase.js"></script>
@@ -75,6 +91,7 @@
     <script src="js/cosmic/gamePiece.js"></script>
     <script src="js/cosmic/KineticCamera.js"></script>
     <script src="js/cosmic/playback.js"></script>
+    -->
     
     <!-- Planteer -->
     <script src="js/background.js"></script>
